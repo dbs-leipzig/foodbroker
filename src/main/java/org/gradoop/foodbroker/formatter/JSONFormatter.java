@@ -16,7 +16,12 @@ import java.util.Map;
  */
 public class JSONFormatter implements Formatter {
 
-    private static final SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd");
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd");
+
+    @Override
+    public String getFileExtension() {
+        return ".json";
+    }
 
     public String format (DataObject dataObject){
         JSONObject json = new JSONObject();

@@ -1,8 +1,10 @@
 package org.gradoop.foodbroker.simulator;
 
 import org.gradoop.foodbroker.configuration.FoodBrokerageConfiguration;
+import org.gradoop.foodbroker.configuration.ProcessConfiguration;
 import org.gradoop.foodbroker.generator.MasterDataGenerator;
 import org.gradoop.foodbroker.model.*;
+import org.gradoop.foodbroker.pile.*;
 import org.gradoop.foodbroker.stores.Store;
 
 import java.math.BigDecimal;
@@ -11,17 +13,33 @@ import java.util.*;
 /**
  * Created by peet on 18.11.14.
  */
-public class FoodBrokerage extends AbstractBusinessProcess {
+public class FoodBrokerage implements BusinessProcess {
 
     private final FoodBrokerageConfiguration config = new FoodBrokerageConfiguration();
     private final Store store;
-    private final MasterDataGenerator generator;
+    private final EmployeePile employeePile;
+    private final CustomerPile customerPile;
+    private final LogisticsPile logisticsPile;
+    private final ProductPile productPile;
+    private final VendorPile vendorPile;
 
     public FoodBrokerage(MasterDataGenerator generator,Store store){
         this.store = store;
-        this.generator = generator;
+        this.employeePile = generator.getEmployeeFactory().newEmployeePile();
+        this.customerPile = generator.getCustomerFactory().newCustomerPile();
+        this.logisticsPile = generator.getLogisticsFactory().newLogisticsPile();
+        this.productPile = generator.getProductFactory().newProductPile();
+        this.vendorPile = generator.getVendorFactory().newVendorPile();
     }
 
+    @Override
+    public ProcessConfiguration getConfig() {
+        return config.process;
+    }
+
+    public Store getStore() {
+        return store;
+    }
 
     @Override
     public void start(Date startDate){
@@ -59,8 +77,8 @@ public class FoodBrokerage extends AbstractBusinessProcess {
         SalesQuotation salesQuotation = new SalesQuotation();
 
         salesQuotation.setDate(startDate);
-        salesQuotation.setSentBy(generator.getEmployeeManager().nextInstance());
-        salesQuotation.setSentTo(generator.getCustomerManager().nextInstance());
+        salesQuotation.setSentBy(employeePile.nextInstance());
+        salesQuotation.setSentTo(customerPile.nextInstance());
 
         store.store(salesQuotation);
 
@@ -85,7 +103,7 @@ public class FoodBrokerage extends AbstractBusinessProcess {
     private SalesQuotationLine newSalesQuotationLine(SalesQuotation salesQuotation){
         SalesQuotationLine salesQuotationLine = new SalesQuotationLine();
         salesQuotationLine.setPartOf(salesQuotation);
-        salesQuotationLine.setContains(generator.getProductManager().nextInstance());
+        salesQuotationLine.setContains(productPile.nextInstance());
         salesQuotationLine.setPurchPrice(salesQuotationLine.getContains().getPrice());
 
         List <MasterDataObject> influencingMasterDataObjects = new ArrayList<>();
@@ -116,7 +134,7 @@ public class FoodBrokerage extends AbstractBusinessProcess {
     private SalesOrder newSalesOrder(SalesQuotation salesQuotation){
         SalesOrder salesOrder = new SalesOrder();
 
-        salesOrder.setProcessedBy(generator.getEmployeeManager().nextInstance());
+        salesOrder.setProcessedBy(employeePile.nextInstance());
         salesOrder.setReceivedFrom(salesQuotation.getSentTo());
         salesOrder.setBasedOn(salesQuotation);
 
@@ -179,7 +197,7 @@ public class FoodBrokerage extends AbstractBusinessProcess {
         }
 
         for (int i = 1; i<= numberOfVendors; i++){
-            Employee processedBy = generator.getEmployeeManager().nextInstance();
+            Employee processedBy = employeePile.nextInstance();
             purchOrders.add(newPurchOrder(salesOrder,processedBy));
         }
 
@@ -190,7 +208,7 @@ public class FoodBrokerage extends AbstractBusinessProcess {
         PurchOrder purchOrder = new PurchOrder();
 
         purchOrder.setServes(salesOrder);
-        purchOrder.setPlacesAt(generator.getVendorManager().nextInstance());
+        purchOrder.setPlacesAt(vendorPile.nextInstance());
         purchOrder.setProcessedBy(processedBy);
 
         purchOrder.setDate(
@@ -259,7 +277,7 @@ public class FoodBrokerage extends AbstractBusinessProcess {
     private DeliveryNote newDeliveryNote(PurchOrder purchOrder) {
         DeliveryNote deliveryNote = new DeliveryNote();
         deliveryNote.setContains(purchOrder);
-        deliveryNote.setOperatedBy(generator.getLogisticsManager().nextInstance());
+        deliveryNote.setOperatedBy(logisticsPile.nextInstance());
 
         List<MasterDataObject> influencingDataObjects = new ArrayList<>();
 

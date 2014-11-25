@@ -16,4 +16,5 @@ public interface Formatter {
      */
     String format (DataObject dataObject);
     String format (Relationship relationship);
+    String getFileExtension();
 }

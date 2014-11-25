@@ -1,25 +1,28 @@
-package org.gradoop.foodbroker.manager;
+package org.gradoop.foodbroker.factory;
 
 import org.gradoop.foodbroker.model.Logistics;
-import org.gradoop.foodbroker.model.MasterDataObject;
-import org.gradoop.foodbroker.model.Vendor;
+import org.gradoop.foodbroker.pile.LogisticsPile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by peet on 14.11.14.
  */
-public class LogisticsManager extends AbstractMasterDataManager {
+public class LogisticsFactory extends AbstractMasterDataFactory {
+
+    private final List<Logistics> logisticses = new ArrayList<>();
+
     @Override
     public Logistics newInstance(Map<String, Object> baseValues) {
         Logistics logistics = new Logistics(baseValues);
-        this.instances.add(logistics);
+        this.logisticses.add(logistics);
         return logistics;
     }
 
-    @Override
-    public Logistics nextInstance() {
-        return (Logistics) super.nextInstance();
+    public LogisticsPile newLogisticsPile(){
+        return new LogisticsPile(logisticses);
     }
 
     @Override

@@ -14,17 +14,16 @@ public class ProcessConfiguration {
 
     private Date startDate;
     private Date endDate;
-    private int cases;
+    private int casesPerScaleFactor;
 
-    public ProcessConfiguration(String className, int scaleFactor){
-        PropertiesConfiguration config = null;
+    public ProcessConfiguration(String className){
         try {
-            config = new PropertiesConfiguration("config.properties");
+            PropertiesConfiguration config = new PropertiesConfiguration("config.properties");
             SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd" );
 
             this.startDate = dateFormatter.parse(config.getString(className+"StartDate"));
             this.endDate = dateFormatter.parse(config.getString(className+"EndDate"));
-            this.cases = scaleFactor * config.getInt(className+"CasesPerScaleFactor");
+            this.casesPerScaleFactor = config.getInt(className+"CasesPerScaleFactor");
         } catch (ConfigurationException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -40,7 +39,7 @@ public class ProcessConfiguration {
         return endDate;
     }
 
-    public int getCases() {
-        return cases;
+    public int getCases(int scaleFactor) {
+        return scaleFactor * casesPerScaleFactor;
     }
 }

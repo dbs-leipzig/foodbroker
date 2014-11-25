@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by peet on 12.11.14.
  */
 public abstract class AbstractDataObject extends AbstractPropertyContainer implements DataObject{
-    protected static long instanceCount = 0;
+    protected static AtomicLong instanceCount = new AtomicLong(0);
     protected final long id;
 
     public AbstractDataObject() {
-        instanceCount++;
-        this.id = instanceCount;
+        this.id = instanceCount.addAndGet(1);
     }
 
     protected String getBusinessKey(String prefix, int length) {

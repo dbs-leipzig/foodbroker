@@ -1,7 +1,7 @@
 package org.gradoop.foodbroker.generator;
 
 import org.gradoop.foodbroker.configuration.MasterDataConfiguration;
-import org.gradoop.foodbroker.manager.*;
+import org.gradoop.foodbroker.factory.*;
 import org.gradoop.foodbroker.model.*;
 import org.gradoop.foodbroker.stores.Store;
 
@@ -19,11 +19,11 @@ public class MasterDataGenerator {
     private int scaleFactor;
     private Store store;
 
-    private EmployeeManager employeeManager = new EmployeeManager();
-    private ProductManager productManager = new ProductManager();
-    private CustomerManager customerManager = new CustomerManager();
-    private LogisticsManager logisticsManager = new LogisticsManager();
-    private VendorManager vendorManager = new VendorManager();
+    private EmployeeFactory employeeFactory = new EmployeeFactory();
+    private ProductFactory productFactory = new ProductFactory();
+    private CustomerFactory customerFactory = new CustomerFactory();
+    private LogisticsFactory logisticsFactory = new LogisticsFactory();
+    private VendorFactory vendorFactory = new VendorFactory();
 
     public MasterDataGenerator(int scaleFactor, Store store) {
         this.scaleFactor = scaleFactor;
@@ -32,17 +32,17 @@ public class MasterDataGenerator {
 
     public void generate() {
 
-        List<MasterDataManager> managers = new ArrayList<>();
+        List<MasterDataFactory> masterDataFactories = new ArrayList<>();
 
-        managers.add(employeeManager);
-        managers.add(productManager);
-        managers.add(customerManager);
-        managers.add(logisticsManager);
-        managers.add(vendorManager);
+        masterDataFactories.add(employeeFactory);
+        masterDataFactories.add(productFactory);
+        masterDataFactories.add(customerFactory);
+        masterDataFactories.add(logisticsFactory);
+        masterDataFactories.add(vendorFactory);
 
-        for (MasterDataManager manager : managers) {
-            MasterDataConfiguration config = new MasterDataConfiguration(manager.getInstanceClassName(), scaleFactor);
-            List<Map<String, Object>> baseValueList = getBaseValueList(config, manager);
+        for (MasterDataFactory masterDataFactory : masterDataFactories) {
+            MasterDataConfiguration config = new MasterDataConfiguration(masterDataFactory.getInstanceClassName(), scaleFactor);
+            List<Map<String, Object>> baseValueList = getBaseValueList(config, masterDataFactory);
 
             int currentOne = 0;
             String quality = "good";
@@ -55,7 +55,7 @@ public class MasterDataGenerator {
                 }
 
                 baseValues.put("_QC", quality);
-                MasterDataObject object = manager.newInstance(baseValues);
+                MasterDataObject object = masterDataFactory.newInstance(baseValues);
 
                 if (currentOne == config.getLastGoodOne()) {
                     quality = "normal";
@@ -67,7 +67,7 @@ public class MasterDataGenerator {
 
     }
 
-    private List<Map<String, Object>> getBaseValueList(MasterDataConfiguration config, MasterDataManager factory) {
+    private List<Map<String, Object>> getBaseValueList(MasterDataConfiguration config, MasterDataFactory factory) {
         List<Map<String, Object>> baseValueList = new ArrayList();
 
         try {
@@ -108,31 +108,24 @@ public class MasterDataGenerator {
         return baseValueList;
     }
 
-    public EmployeeManager getEmployeeManager() {
-        return employeeManager;
+
+    public EmployeeFactory getEmployeeFactory() {
+        return employeeFactory;
     }
 
-    public ProductManager getProductManager() {
-        return productManager;
+    public ProductFactory getProductFactory() {
+        return productFactory;
     }
 
-    public CustomerManager getCustomerManager() {
-        return customerManager;
+    public CustomerFactory getCustomerFactory() {
+        return customerFactory;
     }
 
-    public LogisticsManager getLogisticsManager() {
-        return logisticsManager;
+    public LogisticsFactory getLogisticsFactory() {
+        return logisticsFactory;
     }
 
-    public VendorManager getVendorManager() {
-        return vendorManager;
-    }
-
-    public void shuffle() {
-        employeeManager.shuffle();
-        productManager.shuffle();
-        customerManager.shuffle();
-        logisticsManager.shuffle();
-        vendorManager.shuffle();
+    public VendorFactory getVendorFactory() {
+        return vendorFactory;
     }
 }

@@ -5,6 +5,8 @@ package org.gradoop.foodbroker.configuration;
  */
 public class FoodBrokerageConfiguration {
 
+    public ProcessConfiguration process = new ProcessConfiguration("FoodBrokerage");
+
     public IntRangeConfiguration numberOfQuotationLines = new IntRangeConfiguration("FoodBrokerageNumberOfQuotationLines");
     public IntRangeConfiguration numberOfQuotedProducts = new IntRangeConfiguration("FoodBrokerageNumberOfQuotedProducts");
     public IntRangeConfiguration numberOfVendors = new IntRangeConfiguration("FoodBrokerageNumberOfVendors");

@@ -1,25 +1,28 @@
-package org.gradoop.foodbroker.manager;
+package org.gradoop.foodbroker.factory;
 
 import org.gradoop.foodbroker.model.Employee;
-import org.gradoop.foodbroker.model.MasterDataObject;
+import org.gradoop.foodbroker.pile.EmployeePile;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by peet on 14.11.14.
  */
-public class EmployeeManager extends AbstractMasterDataManager {
+public class EmployeeFactory extends AbstractMasterDataFactory {
+
+
+    private final List<Employee> employees = new ArrayList<>();
 
     public Employee newInstance(Map<String, Object> baseValues) {
         Employee employee = new Employee(baseValues);
-        this.instances.add(employee);
+        this.employees.add(employee);
         return employee;
     }
 
-    @Override
-    public Employee nextInstance() {
-        return (Employee) super.nextInstance();
+    public EmployeePile newEmployeePile(){
+        return new EmployeePile(employees);
     }
 
     @Override

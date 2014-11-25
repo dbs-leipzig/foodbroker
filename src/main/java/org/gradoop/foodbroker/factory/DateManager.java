@@ -1,6 +1,4 @@
-package org.gradoop.foodbroker.manager;
-
-import org.gradoop.foodbroker.model.MasterDataObject;
+package org.gradoop.foodbroker.factory;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

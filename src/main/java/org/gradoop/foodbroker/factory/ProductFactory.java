@@ -1,28 +1,34 @@
-package org.gradoop.foodbroker.manager;
+package org.gradoop.foodbroker.factory;
 
 import org.gradoop.foodbroker.model.Product;
+import org.gradoop.foodbroker.pile.ProductPile;
 
+import java.io.CharArrayWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by peet on 14.11.14.
  */
-public class ProductManager extends AbstractMasterDataManager {
+public class ProductFactory extends AbstractMasterDataFactory {
+
+    private final List<Product> products = new ArrayList<>();
+
     @Override
     public Product newInstance(Map<String, Object> baseValues) {
         Product product = new Product(baseValues);
-        this.instances.add(product);
+        this.products.add(product);
         return product;
+    }
+
+    public ProductPile newProductPile(){
+        return new ProductPile(products);
     }
 
     @Override
     public String getInstanceClassName() {
         return Product.class.getSimpleName();
-    }
-
-    @Override
-    public Product nextInstance() {
-        return (Product) super.nextInstance();
     }
 
     @Override

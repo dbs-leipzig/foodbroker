@@ -1,4 +1,4 @@
-package org.gradoop.foodbroker.manager;
+package org.gradoop.foodbroker.factory;
 
 import org.gradoop.foodbroker.model.MasterDataObject;
 
@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Created by peet on 14.11.14.
  */
-public interface MasterDataManager {
+public interface MasterDataFactory {
     public MasterDataObject newInstance(Map<String, Object> baseValues);
 
     public String getInstanceClassName();
@@ -15,8 +15,4 @@ public interface MasterDataManager {
     public String getRowCountSql();
 
     public String getBaseValueSql();
-
-    public void shuffle();
-
-    public MasterDataObject nextInstance();
 }
