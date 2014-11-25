@@ -25,4 +25,8 @@ public class Vendor extends AbstractMasterDataObject {
         properties.put("num", num);
         return properties;
     }
+
+    public String getNum() {
+        return num;
+    }
 }

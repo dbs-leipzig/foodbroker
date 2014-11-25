@@ -15,7 +15,7 @@ public class Employee extends AbstractMasterDataObject {
 
     public Employee(Map<String, Object> baseValues) {
         super(baseValues);
-        this.name = (String) baseValues.get("first_name") + " " + (String) baseValues.get("family_name");
+        this.name = baseValues.get("first_name") + " " + baseValues.get("family_name");
         this.gender = (String) baseValues.get("gender");
         this.num = getBusinessKey("EMP", 10);
     }
@@ -25,6 +25,11 @@ public class Employee extends AbstractMasterDataObject {
         Map<String, Object> properties = super.getProperties();
         properties.put("name",name);
         properties.put("num",num);
+        properties.put("gender",gender);
         return properties;
+    }
+
+    public String getNum() {
+        return num;
     }
 }

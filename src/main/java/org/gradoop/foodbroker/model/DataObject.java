@@ -1,18 +1,12 @@
 package org.gradoop.foodbroker.model;
 
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by peet on 18.11.14.
  */
-public interface DataObject {
-    /**
-     * Returns all properties of a data object.
-     *
-     * @return property map
-     */
-    public Map<String,Object> getProperties();
-
+public interface DataObject extends PropertyContainer{
     /**
      * Return a global unique identifier.
      *
@@ -20,4 +14,6 @@ public interface DataObject {
      */
     public long getID();
     public String getLabel();
+    //public List<Relationship> getRelationships();
+    //public void addRelationship(Relationship relationship);
 }

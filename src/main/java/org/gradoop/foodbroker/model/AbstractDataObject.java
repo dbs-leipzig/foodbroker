@@ -1,18 +1,20 @@
 package org.gradoop.foodbroker.model;
 
-import org.json.JSONObject;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by peet on 12.11.14.
  */
-public abstract class AbstractDataObject implements DataObject{
-    protected static long id = 0;
+public abstract class AbstractDataObject extends AbstractPropertyContainer implements DataObject{
+    protected static long instanceCount = 0;
+    protected final long id;
 
     public AbstractDataObject() {
-        id++;
+        instanceCount++;
+        this.id = instanceCount;
     }
 
     protected String getBusinessKey(String prefix, int length) {
@@ -29,7 +31,7 @@ public abstract class AbstractDataObject implements DataObject{
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + ":" + String.valueOf(this.id);
+        return this.getClass().getSimpleName() + ":" + String.valueOf(instanceCount);
     }
 
     @Override
@@ -44,8 +46,9 @@ public abstract class AbstractDataObject implements DataObject{
 
     @Override
     public Map<String, Object> getProperties() {
-        Map<String, Object> properties = new HashMap();
+        Map<String, Object> properties = super.getProperties();
         properties.put("_CLASS", this.getClass().getSimpleName());
         return properties;
     }
+
 }

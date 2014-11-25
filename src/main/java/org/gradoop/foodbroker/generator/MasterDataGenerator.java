@@ -1,9 +1,8 @@
-package org.gradoop.foodbroker.generators;
+package org.gradoop.foodbroker.generator;
 
-import org.gradoop.foodbroker.formatters.Formatter;
-import org.gradoop.foodbroker.formatters.JSONFormatter;
+import org.gradoop.foodbroker.configuration.MasterDataConfiguration;
+import org.gradoop.foodbroker.manager.*;
 import org.gradoop.foodbroker.model.*;
-import org.gradoop.foodbroker.stores.ConsoleStore;
 import org.gradoop.foodbroker.stores.Store;
 
 import java.sql.*;
@@ -18,25 +17,32 @@ import java.util.Map;
 public class MasterDataGenerator {
 
     private int scaleFactor;
+    private Store store;
 
-    public MasterDataGenerator(int scaleFactor) {
+    private EmployeeManager employeeManager = new EmployeeManager();
+    private ProductManager productManager = new ProductManager();
+    private CustomerManager customerManager = new CustomerManager();
+    private LogisticsManager logisticsManager = new LogisticsManager();
+    private VendorManager vendorManager = new VendorManager();
+
+    public MasterDataGenerator(int scaleFactor, Store store) {
         this.scaleFactor = scaleFactor;
+        this.store = store;
     }
 
     public void generate() {
-        List<MasterDataFactory> factories = new ArrayList<>();
 
-        Store store = new ConsoleStore(new JSONFormatter());
+        List<MasterDataManager> managers = new ArrayList<>();
 
-        factories.add(new EmployeeFactory());
-        factories.add(new ProductFactory());
-        factories.add(new CustomerFactory());
-        factories.add(new LogisticsFactory());
-        factories.add(new VendorFactory());
+        managers.add(employeeManager);
+        managers.add(productManager);
+        managers.add(customerManager);
+        managers.add(logisticsManager);
+        managers.add(vendorManager);
 
-        for (MasterDataFactory factory : factories) {
-            MasterDataConfiguration config = new MasterDataConfiguration(factory.getInstanceClassName(), scaleFactor);
-            List<Map<String, Object>> baseValueList = getBaseValueList(config, factory);
+        for (MasterDataManager manager : managers) {
+            MasterDataConfiguration config = new MasterDataConfiguration(manager.getInstanceClassName(), scaleFactor);
+            List<Map<String, Object>> baseValueList = getBaseValueList(config, manager);
 
             int currentOne = 0;
             String quality = "good";
@@ -49,7 +55,7 @@ public class MasterDataGenerator {
                 }
 
                 baseValues.put("_QC", quality);
-                MasterDataObject object = factory.newInstance(baseValues);
+                MasterDataObject object = manager.newInstance(baseValues);
 
                 if (currentOne == config.getLastGoodOne()) {
                     quality = "normal";
@@ -61,7 +67,7 @@ public class MasterDataGenerator {
 
     }
 
-    private List<Map<String, Object>> getBaseValueList(MasterDataConfiguration config, MasterDataFactory factory) {
+    private List<Map<String, Object>> getBaseValueList(MasterDataConfiguration config, MasterDataManager factory) {
         List<Map<String, Object>> baseValueList = new ArrayList();
 
         try {
@@ -100,5 +106,33 @@ public class MasterDataGenerator {
         }
 
         return baseValueList;
+    }
+
+    public EmployeeManager getEmployeeManager() {
+        return employeeManager;
+    }
+
+    public ProductManager getProductManager() {
+        return productManager;
+    }
+
+    public CustomerManager getCustomerManager() {
+        return customerManager;
+    }
+
+    public LogisticsManager getLogisticsManager() {
+        return logisticsManager;
+    }
+
+    public VendorManager getVendorManager() {
+        return vendorManager;
+    }
+
+    public void shuffle() {
+        employeeManager.shuffle();
+        productManager.shuffle();
+        customerManager.shuffle();
+        logisticsManager.shuffle();
+        vendorManager.shuffle();
     }
 }

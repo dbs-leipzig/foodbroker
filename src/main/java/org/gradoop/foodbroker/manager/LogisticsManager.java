@@ -1,14 +1,25 @@
-package org.gradoop.foodbroker.model;
+package org.gradoop.foodbroker.manager;
+
+import org.gradoop.foodbroker.model.Logistics;
+import org.gradoop.foodbroker.model.MasterDataObject;
+import org.gradoop.foodbroker.model.Vendor;
 
 import java.util.Map;
 
 /**
  * Created by peet on 14.11.14.
  */
-public class LogisticsFactory implements MasterDataFactory {
+public class LogisticsManager extends AbstractMasterDataManager {
     @Override
     public Logistics newInstance(Map<String, Object> baseValues) {
-        return new Logistics(baseValues);
+        Logistics logistics = new Logistics(baseValues);
+        this.instances.add(logistics);
+        return logistics;
+    }
+
+    @Override
+    public Logistics nextInstance() {
+        return (Logistics) super.nextInstance();
     }
 
     @Override

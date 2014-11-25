@@ -1,4 +1,4 @@
-package org.gradoop.foodbroker.generators;
+package org.gradoop.foodbroker.configuration;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;

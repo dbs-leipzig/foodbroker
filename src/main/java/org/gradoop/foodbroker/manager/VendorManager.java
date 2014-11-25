@@ -1,19 +1,29 @@
-package org.gradoop.foodbroker.model;
+package org.gradoop.foodbroker.manager;
+
+import org.gradoop.foodbroker.model.MasterDataObject;
+import org.gradoop.foodbroker.model.Vendor;
 
 import java.util.Map;
 
 /**
  * Created by peet on 14.11.14.
  */
-public class VendorFactory implements MasterDataFactory {
+public class VendorManager extends AbstractMasterDataManager {
     @Override
     public Vendor newInstance(Map<String, Object> baseValues) {
-        return new Vendor(baseValues);
+        Vendor vendor = new Vendor(baseValues);
+        this.instances.add(vendor);
+        return vendor;
     }
 
     @Override
     public String getInstanceClassName() {
         return Vendor.class.getSimpleName();
+    }
+
+    @Override
+    public Vendor nextInstance() {
+        return (Vendor) super.nextInstance();
     }
 
     @Override

@@ -26,4 +26,7 @@ public class Customer extends AbstractMasterDataObject implements MasterDataObje
         return properties;
     }
 
+    public String getNum() {
+        return num;
+    }
 }

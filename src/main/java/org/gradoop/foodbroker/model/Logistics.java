@@ -25,4 +25,9 @@ public class Logistics extends AbstractMasterDataObject {
         properties.put("num", num);
         return properties;
     }
+
+    public String getNum() {
+        return num;
+    }
+
 }

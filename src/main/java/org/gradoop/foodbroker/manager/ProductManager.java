@@ -1,19 +1,28 @@
-package org.gradoop.foodbroker.model;
+package org.gradoop.foodbroker.manager;
+
+import org.gradoop.foodbroker.model.Product;
 
 import java.util.Map;
 
 /**
  * Created by peet on 14.11.14.
  */
-public class ProductFactory implements MasterDataFactory {
+public class ProductManager extends AbstractMasterDataManager {
     @Override
     public Product newInstance(Map<String, Object> baseValues) {
-        return new Product(baseValues);
+        Product product = new Product(baseValues);
+        this.instances.add(product);
+        return product;
     }
 
     @Override
     public String getInstanceClassName() {
         return Product.class.getSimpleName();
+    }
+
+    @Override
+    public Product nextInstance() {
+        return (Product) super.nextInstance();
     }
 
     @Override

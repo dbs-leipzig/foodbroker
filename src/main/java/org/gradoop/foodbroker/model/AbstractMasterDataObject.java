@@ -25,6 +25,11 @@ public abstract class AbstractMasterDataObject extends AbstractDataObject implem
     public Map<String, Object> getProperties() {
         Map<String, Object> properties = super.getProperties();
         properties.put("_KIND","MasterData");
+        properties.put("_QC",this.quality);
         return properties;
+    }
+
+    public String getQuality() {
+        return quality;
     }
 }
