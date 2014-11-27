@@ -1,5 +1,6 @@
 package org.gradoop.foodbroker.stores;
 
+import org.gradoop.foodbroker.formatter.Formatter;
 import org.gradoop.foodbroker.model.DataObject;
 import org.gradoop.foodbroker.model.Relationship;
 
@@ -11,4 +12,5 @@ public interface Store {
     void store(DataObject dataObject);
     void store(Relationship relationship);
     void close();
+    Formatter getFormatter();
 }

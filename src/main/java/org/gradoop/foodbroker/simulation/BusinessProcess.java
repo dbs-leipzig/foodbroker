@@ -1,4 +1,4 @@
-package org.gradoop.foodbroker.simulator;
+package org.gradoop.foodbroker.simulation;
 
 import org.gradoop.foodbroker.configuration.ProcessConfiguration;
 import org.gradoop.foodbroker.model.TransactionalDataObject;

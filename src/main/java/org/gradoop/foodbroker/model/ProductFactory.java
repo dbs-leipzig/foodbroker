@@ -1,9 +1,7 @@
-package org.gradoop.foodbroker.factory;
+package org.gradoop.foodbroker.model;
 
-import org.gradoop.foodbroker.model.Product;
 import org.gradoop.foodbroker.pile.ProductPile;
 
-import java.io.CharArrayWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

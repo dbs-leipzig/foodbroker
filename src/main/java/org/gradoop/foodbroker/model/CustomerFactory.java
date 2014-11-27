@@ -1,6 +1,5 @@
-package org.gradoop.foodbroker.factory;
+package org.gradoop.foodbroker.model;
 
-import org.gradoop.foodbroker.model.Customer;
 import org.gradoop.foodbroker.pile.CustomerPile;
 
 import java.util.ArrayList;

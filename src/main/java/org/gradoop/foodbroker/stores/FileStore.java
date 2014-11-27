@@ -11,11 +11,12 @@ import java.util.Map;
 /**
  * Created by peet on 25.11.14.
  */
-public class FileStore implements Store{
+public class FileStore extends AbstractStore{
 
+    private String nodeFilePath;
     private FileWriter nodeFile;
+    private String edgeFilePath;
     private FileWriter edgeFile;
-    private Formatter formatter;
     private int thread;
 
     public FileStore(Formatter formatter){
@@ -31,8 +32,8 @@ public class FileStore implements Store{
     @Override
     public void open() {
         String filePath = System.getProperty("user.home")+"/";
-        String nodeFilePath = filePath + "nodefile_"+String.valueOf(thread) + formatter.getFileExtension();
-        String edgeFilePath = filePath + "edgefile_"+String.valueOf(thread) + formatter.getFileExtension();
+        nodeFilePath = filePath + "nodefile_"+String.valueOf(thread) + formatter.getFileExtension();
+        edgeFilePath = filePath + "edgefile_"+String.valueOf(thread) + formatter.getFileExtension();
 
         try {
             nodeFile = new FileWriter(nodeFilePath);
@@ -83,5 +84,13 @@ public class FileStore implements Store{
             e.printStackTrace();
         }
         System.out.println("Finito : " +String.valueOf(thread));
+    }
+
+    public String getNodeFilePath() {
+        return nodeFilePath;
+    }
+
+    public String getEdgeFilePath() {
+        return edgeFilePath;
     }
 }

@@ -1,8 +1,6 @@
-package org.gradoop.foodbroker.simulator;
+package org.gradoop.foodbroker.simulation;
 
 import org.gradoop.foodbroker.configuration.ProcessConfiguration;
-import org.gradoop.foodbroker.factory.DateManager;
-import org.gradoop.foodbroker.stores.Store;
 
 /**
  * Created by peet on 25.11.14.

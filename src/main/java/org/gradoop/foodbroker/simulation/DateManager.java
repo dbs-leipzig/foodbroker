@@ -1,4 +1,4 @@
-package org.gradoop.foodbroker.factory;
+package org.gradoop.foodbroker.simulation;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

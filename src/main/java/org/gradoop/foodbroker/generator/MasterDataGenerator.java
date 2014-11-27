@@ -1,7 +1,6 @@
 package org.gradoop.foodbroker.generator;
 
 import org.gradoop.foodbroker.configuration.MasterDataConfiguration;
-import org.gradoop.foodbroker.factory.*;
 import org.gradoop.foodbroker.model.*;
 import org.gradoop.foodbroker.stores.Store;
 
@@ -31,6 +30,8 @@ public class MasterDataGenerator {
     }
 
     public void generate() {
+
+        store.open();
 
         List<MasterDataFactory> masterDataFactories = new ArrayList<>();
 
@@ -64,6 +65,8 @@ public class MasterDataGenerator {
                 store.store(object);
             }
         }
+
+        store.close();
 
     }
 

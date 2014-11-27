@@ -2,103 +2,86 @@ package org.gradoop.foodbroker;
 
 import org.apache.commons.cli.*;
 import org.gradoop.foodbroker.formatter.Formatter;
+import org.gradoop.foodbroker.formatter.FormatterFactory;
 import org.gradoop.foodbroker.formatter.JSONFormatter;
+import org.gradoop.foodbroker.formatter.JSONFormatterFactory;
 import org.gradoop.foodbroker.generator.MasterDataGenerator;
-import org.gradoop.foodbroker.simulator.BusinessProcess;
-import org.gradoop.foodbroker.simulator.BusinessProcessRunner;
-import org.gradoop.foodbroker.simulator.FoodBrokerage;
-import org.gradoop.foodbroker.stores.Store;
+import org.gradoop.foodbroker.simulation.BusinessProcess;
+import org.gradoop.foodbroker.simulation.BusinessProcessRunner;
+import org.gradoop.foodbroker.simulation.FoodBrokerage;
+import org.gradoop.foodbroker.stores.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FoodBroker {
-    public static void main(String[] args) throws ParseException {
-        // create the command line parser
-        CommandLineParser parser = new BasicParser();
 
-        // create the Options
+    /*
+    is set to false in the case of any invalid option
+     */
+    private static Boolean allOptionsProvidedAndValid = true;
+    /*
+    represents the relative size of generated datasets
+     */
+    private static int scaleFactor = 0;
+    /*
+    factory for formatters of the chosen format
+     */
+    private static FormatterFactory formatterFactory = null;
+    /*
+    factory for stores of the chosen type
+     */
+    private static StoreFactory storeFactory = null;
+
+    /**
+     * main method
+     * @param args
+     * @throws ParseException
+     */
+    public static void main(String[] args) throws ParseException {
+
+        // create and parse options
         Options options = new Options();
         options.addOption("s", "scale", true, "Set Scale Factor");
         options.addOption("r", "store", true, "Choose Store");
         options.addOption("f", "format", true, "Choose Output format");
 
-        CommandLine line = parser.parse(options, args);
+        // parse options
+        CommandLineParser parser = new BasicParser();
+        CommandLine commandLine = parser.parse(options, args);
 
-        int scaleFactor = 0;
-        //Store store = null;
-        //Formatter formatter = null;
-        Boolean run = true;
+        // validate options
+        validateScaleFactor(commandLine);
+        validateFormat(commandLine);
+        validateStore(commandLine);
 
-        if(line.hasOption("scale")){
-             scaleFactor = Integer.parseInt(line.getOptionValue("scale"));
+        if(allOptionsProvidedAndValid){
 
-            if (scaleFactor > 0 && scaleFactor < 10000){
+            List<Store> storeList = new ArrayList<>();
 
-            }
-            else{
-                System.out.println("scale factor out of range 1..10000");
-                run = false;
-            }
-        }
-        else{
-            System.out.println("no scale factor specified");
-            run = false;
-        }
+            // generate master data
+            Formatter masterDataFormatter = formatterFactory.newInstance();
+            Store masterDataStore = storeFactory.newInstance(masterDataFormatter);
+            storeList.add(masterDataStore);
 
-        if(line.hasOption("format")){
-            String formatClass = line.getOptionValue("format");
+            MasterDataGenerator masterDataGenerator = new MasterDataGenerator(scaleFactor,masterDataStore);
+            masterDataGenerator.generate();
 
-            if(formatClass.equals("json")){
-                //formatter = new JSONFormatter();
-
-            }
-            else{
-                System.out.println("Unknown formatter : " + formatClass);
-                run = false;
-            }
-        }
-        else {
-            System.out.println("no formatter specified");
-            run = false;
-        }
-
-        if(line.hasOption("store")){
-            String storeClass = line.getOptionValue("store");
-
-            if(storeClass.equals("console")){
-                //store = new ConsoleStore(formatter);
-            }
-            else if (storeClass.equals("file")){
-                //store = new org.gradoop.foodbroker.stores.FileStore(formatter);
-            }
-            else{
-                System.out.println("Unknown store : " + storeClass);
-                run = false;
-            }
-        }
-        else {
-            System.out.println("no store specified");
-            run = false;
-        }
-
-        if(run){
-            Formatter formatter = new JSONFormatter();
-            Store store = new org.gradoop.foodbroker.stores.FileStore(formatter);
-            MasterDataGenerator generator = new MasterDataGenerator(scaleFactor,store);
-
-            store.open();
-            generator.generate();
-            store.close();
+            // prepare parallel simulation
 
             int availableProcessors = Runtime.getRuntime().availableProcessors();
             List<Thread> threadList = new ArrayList<>();
 
             for(int processor = 1; processor <= availableProcessors; processor++){
-                formatter = new JSONFormatter();
-                store = new org.gradoop.foodbroker.stores.FileStore(formatter,processor);
-                BusinessProcess businessProcess = new FoodBrokerage(generator,store);
+                // simulate business process
+                Formatter transactionalDataFormatter = new JSONFormatter();
+                Store transactionalDataStore = new org.gradoop.foodbroker.stores.FileStore(transactionalDataFormatter,processor);
+                storeList.add(transactionalDataStore);
+
+                BusinessProcess businessProcess = new FoodBrokerage(masterDataGenerator,transactionalDataStore);
                 BusinessProcessRunner runner = new BusinessProcessRunner(businessProcess,scaleFactor,availableProcessors );
+
+                // manage threads
                 Thread thread = new Thread(runner);
                 threadList.add(thread);
                 thread.start();
@@ -111,6 +94,67 @@ public class FoodBroker {
                     e.printStackTrace();
                 }
             }
+
+            // merge files
+            if (storeFactory instanceof FileStoreFactory){
+                /*
+                TODO
+                 */
+            }
+        }
+    }
+
+    private static void validateStore(CommandLine commandLine) {
+        if(commandLine.hasOption("store")){
+            String storeClass = commandLine.getOptionValue("store");
+
+            if(storeClass.equals("console")){
+                storeFactory = new ConsoleStoreFactory();
+            }
+            else if (storeClass.equals("file")){
+                storeFactory = new FileStoreFactory();
+            }
+            else{
+                System.out.println("Unknown store : " + storeClass);
+                allOptionsProvidedAndValid = false;
+            }
+        }
+        else {
+            System.out.println("no store specified");
+            allOptionsProvidedAndValid = false;
+        }
+    }
+
+    private static void validateFormat(CommandLine commandLine) {
+        if(commandLine.hasOption("format")){
+            String format = commandLine.getOptionValue("format");
+
+            if(format.equals("json")){
+                formatterFactory = new JSONFormatterFactory();
+            }
+            else{
+                System.out.println("Unknown formatter : " + format);
+                allOptionsProvidedAndValid = false;
+            }
+        }
+        else {
+            System.out.println("no formatter specified");
+            allOptionsProvidedAndValid = false;
+        }
+    }
+
+    private static void validateScaleFactor(CommandLine commandLine) {
+        if(commandLine.hasOption("scale")){
+            scaleFactor = Integer.parseInt(commandLine.getOptionValue("scale"));
+
+            if (scaleFactor < 1 || scaleFactor > 10000){
+                System.out.println("scale factor out of range 1..10000");
+                allOptionsProvidedAndValid = false;
+            }
+        }
+        else{
+            System.out.println("no scale factor specified");
+            allOptionsProvidedAndValid = false;
         }
     }
 }

@@ -11,17 +11,10 @@ import java.util.Map;
 /**
  * Created by peet on 18.11.14.
  */
-public class ConsoleStore implements Store {
-
-    private Formatter formatter;
+public class ConsoleStore extends AbstractStore {
 
     public ConsoleStore(Formatter formatter){
         this.formatter = formatter;
-    }
-
-    @Override
-    public void open() {
-
     }
 
     @Override
@@ -45,9 +38,4 @@ public class ConsoleStore implements Store {
         System.out.println(formatter.format(relationship));
     }
 
-
-    @Override
-    public void close() {
-
-    }
 }

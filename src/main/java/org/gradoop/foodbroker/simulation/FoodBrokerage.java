@@ -1,4 +1,4 @@
-package org.gradoop.foodbroker.simulator;
+package org.gradoop.foodbroker.simulation;
 
 import org.gradoop.foodbroker.configuration.FoodBrokerageConfiguration;
 import org.gradoop.foodbroker.configuration.ProcessConfiguration;
@@ -56,11 +56,14 @@ public class FoodBrokerage implements BusinessProcess {
 
             List<PurchOrderLine> purchOrderLines = newPurchOrderLines(purchOrders,salesOrderLines);
 
-            List<DeliveryNote> deliveryNotes = newDeliveryNotes(purchOrders);
+            //List<DeliveryNote> deliveryNotes =
+            newDeliveryNotes(purchOrders);
 
-            List<PurchInvoice> purchInvoices = newPurchInvoices(purchOrderLines);
+            //List<PurchInvoice> purchInvoices =
+            newPurchInvoices(purchOrderLines);
 
-            SalesInvoice salesInvoice = newSalesInvoice(salesOrderLines);
+            //SalesInvoice salesInvoice =
+            newSalesInvoice(salesOrderLines);
         }
 
     }
