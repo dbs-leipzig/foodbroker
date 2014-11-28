@@ -1,12 +1,11 @@
 package org.biiig.foodbroker.model;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 /**
  * Created by peet on 21.11.14.
  */
-public class PurchOrderLine extends AbstractOrderLine {
+public class PurchOrderLine extends AbstractERPOrderLine {
 
     public BigDecimal getPurchPrice() {
         return (BigDecimal) this.properties.get("purchPrice");

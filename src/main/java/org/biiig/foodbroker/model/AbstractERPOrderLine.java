@@ -3,10 +3,11 @@ package org.biiig.foodbroker.model;
 /**
  * Created by peet on 27.11.14.
  */
-public abstract class AbstractOrderLine extends AbstractRelationship {
+public abstract class AbstractERPOrderLine extends AbstractRelationship {
 
-    public AbstractOrderLine() {
+    public AbstractERPOrderLine() {
         this.metaData.put("type",this.getClass().getSimpleName());
+        this.metaData.put("system","ERP");
     }
 
     public int getQuantity() {
@@ -27,5 +28,15 @@ public abstract class AbstractOrderLine extends AbstractRelationship {
 
     public void setPartOf(TransactionalDataObject partOf) {
         this.setStartDataObject(partOf);
+    }
+
+    @Override
+    public String getStartAlias() {
+        return "partOf";
+    }
+
+    @Override
+    public String getEndAlias() {
+        return "contains";
     }
 }

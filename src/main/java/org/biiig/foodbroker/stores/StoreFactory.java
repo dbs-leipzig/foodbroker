@@ -7,4 +7,5 @@ import org.biiig.foodbroker.formatter.Formatter;
  */
 public interface StoreFactory {
     Store newInstance(Formatter formatter);
+    Store newInstance(Formatter formatter, int thread);
 }

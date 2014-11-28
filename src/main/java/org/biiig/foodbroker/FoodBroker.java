@@ -3,8 +3,8 @@ package org.biiig.foodbroker;
 import org.apache.commons.cli.*;
 import org.biiig.foodbroker.formatter.Formatter;
 import org.biiig.foodbroker.formatter.FormatterFactory;
-import org.biiig.foodbroker.formatter.JSONFormatter;
 import org.biiig.foodbroker.formatter.JSONFormatterFactory;
+import org.biiig.foodbroker.formatter.SQLFormatterFactory;
 import org.biiig.foodbroker.generator.MasterDataGenerator;
 import org.biiig.foodbroker.simulation.BusinessProcess;
 import org.biiig.foodbroker.simulation.BusinessProcessRunner;
@@ -32,6 +32,10 @@ public class FoodBroker {
     factory for stores of the chosen type
      */
     private static StoreFactory storeFactory = null;
+    /*
+    combines the stores from multiple threads
+     */
+    private static StoreCombiner storeCombiner = null;
 
     /**
      * main method
@@ -57,12 +61,10 @@ public class FoodBroker {
 
         if(allOptionsProvidedAndValid){
 
-            List<Store> storeList = new ArrayList<>();
-
             // generate master data
             Formatter masterDataFormatter = formatterFactory.newInstance();
             Store masterDataStore = storeFactory.newInstance(masterDataFormatter);
-            storeList.add(masterDataStore);
+            storeCombiner.add(masterDataStore);
 
             MasterDataGenerator masterDataGenerator = new MasterDataGenerator(scaleFactor,masterDataStore);
             masterDataGenerator.generate();
@@ -75,8 +77,8 @@ public class FoodBroker {
             for(int processor = 1; processor <= availableProcessors; processor++){
                 // simulate business process
                 Formatter transactionalDataFormatter = formatterFactory.newInstance();
-                Store transactionalDataStore = storeFactory.newInstance(transactionalDataFormatter);
-                storeList.add(transactionalDataStore);
+                Store transactionalDataStore = storeFactory.newInstance(transactionalDataFormatter, processor);
+                storeCombiner.add(transactionalDataStore);
 
                 BusinessProcess businessProcess = new FoodBrokerage(masterDataGenerator,transactionalDataStore);
                 BusinessProcessRunner runner = new BusinessProcessRunner(businessProcess,scaleFactor,availableProcessors );
@@ -96,11 +98,7 @@ public class FoodBroker {
             }
 
             // merge files
-            if (storeFactory instanceof FileStoreFactory){
-                /*
-                TODO
-                 */
-            }
+            storeCombiner.combine();
         }
     }
 
@@ -110,9 +108,11 @@ public class FoodBroker {
 
             if(storeClass.equals("console")){
                 storeFactory = new ConsoleStoreFactory();
+                storeCombiner = new DummyStoreCombiner();
             }
             else if (storeClass.equals("file")){
                 storeFactory = new FileStoreFactory();
+                storeCombiner = new FileStoreCombiner(formatterFactory.newInstance());
             }
             else{
                 System.out.println("Unknown store : " + storeClass);
@@ -131,6 +131,9 @@ public class FoodBroker {
 
             if(format.equals("json")){
                 formatterFactory = new JSONFormatterFactory();
+            }
+            else if (format.equals("sql")){
+                formatterFactory = new SQLFormatterFactory();
             }
             else{
                 System.out.println("Unknown formatter : " + format);

@@ -3,9 +3,6 @@ package org.biiig.foodbroker.stores;
 import org.biiig.foodbroker.formatter.Formatter;
 import org.biiig.foodbroker.model.DataObject;
 import org.biiig.foodbroker.model.Relationship;
-import org.biiig.foodbroker.model.SimpleRelationship;
-
-import java.util.Map;
 
 /**
  * Created by peet on 18.11.14.
@@ -16,13 +13,18 @@ public class ConsoleStore extends AbstractStore {
         this.formatter = formatter;
     }
 
+
+
     @Override
     public void store(DataObject dataObject) {
         System.out.println(formatter.format(dataObject));
 
-        for(String key : dataObject.getNestedRelationshipKeys() ){
-            store(dataObject.getNestedRelationship(key));
+        if (formatter.hasSeparateRelationshipHandling()) {
+            for (String key : dataObject.getNestedRelationshipKeys()) {
+                store(dataObject.getNestedRelationship(key));
+            }
         }
+
     }
 
     @Override

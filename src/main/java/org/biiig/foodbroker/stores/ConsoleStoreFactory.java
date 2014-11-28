@@ -10,4 +10,9 @@ public class ConsoleStoreFactory extends AbstractStoreFactory {
     public Store newInstance(Formatter formatter) {
         return new ConsoleStore(formatter);
     }
+
+    @Override
+    public Store newInstance(Formatter formatter, int thread) {
+        return new ConsoleStore(formatter);
+    }
 }

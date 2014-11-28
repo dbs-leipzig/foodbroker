@@ -20,4 +20,9 @@ public abstract class AbstractERPDataObject extends AbstractDataObject {
 
         this.properties.put("num",prefix + idString);
     }
+
+    @Override
+    public Object getLocalID() {
+        return this.properties.get("num");
+    }
 }

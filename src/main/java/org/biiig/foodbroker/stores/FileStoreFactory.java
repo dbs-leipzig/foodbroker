@@ -10,4 +10,9 @@ public class FileStoreFactory extends AbstractStoreFactory{
     public Store newInstance(Formatter formatter) {
         return new FileStore(formatter);
     }
+
+    @Override
+    public Store newInstance(Formatter formatter, int thread) {
+        return new FileStore(formatter, thread);
+    }
 }

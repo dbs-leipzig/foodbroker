@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by peet on 18.11.14.
  */
-public class JSONFormatter implements Formatter {
+public class JSONFormatter extends AbstractFormatter {
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd");
 
@@ -65,5 +65,14 @@ public class JSONFormatter implements Formatter {
             json.put(key,value);
         }
         return json;
+    }
+
+    protected String getExtension(){
+        return ".json";
+    }
+
+    @Override
+    public boolean hasSeparateRelationshipHandling() {
+        return true;
     }
 }

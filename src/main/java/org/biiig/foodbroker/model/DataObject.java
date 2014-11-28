@@ -15,4 +15,5 @@ public interface DataObject extends PropertyContainer{
 
     public Set<String> getNestedRelationshipKeys();
     public SimpleRelationship getNestedRelationship(String key);
+    public Object getLocalID();
 }

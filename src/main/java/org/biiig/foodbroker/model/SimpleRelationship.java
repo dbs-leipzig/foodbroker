@@ -5,11 +5,19 @@ package org.biiig.foodbroker.model;
  */
 public class SimpleRelationship extends AbstractRelationship {
 
-
     public SimpleRelationship(DataObject startDataObject, DataObject endDataObject,String type){
         this.startDataObject = startDataObject;
         this.endDataObject = endDataObject;
         this.metaData.put("type",type);
     }
 
+    @Override
+    public String getStartAlias() {
+        return "start";
+    }
+
+    @Override
+    public String getEndAlias() {
+        return "end";
+    }
 }

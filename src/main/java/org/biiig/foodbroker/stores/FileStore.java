@@ -3,10 +3,8 @@ package org.biiig.foodbroker.stores;
 import org.biiig.foodbroker.formatter.Formatter;
 import org.biiig.foodbroker.model.DataObject;
 import org.biiig.foodbroker.model.Relationship;
-import org.biiig.foodbroker.model.SimpleRelationship;
 
 import java.io.*;
-import java.util.Map;
 
 /**
  * Created by peet on 25.11.14.
@@ -14,9 +12,9 @@ import java.util.Map;
 public class FileStore extends AbstractStore{
 
     private String nodeFilePath;
-    private FileWriter nodeFile;
+    private FileWriter nodeFileWriter;
     private String edgeFilePath;
-    private FileWriter edgeFile;
+    private FileWriter edgeFileWriter;
     private int thread;
 
     public FileStore(Formatter formatter){
@@ -31,13 +29,12 @@ public class FileStore extends AbstractStore{
 
     @Override
     public void open() {
-        String filePath = System.getProperty("user.home")+"/";
-        nodeFilePath = filePath + "nodefile_"+String.valueOf(thread) + formatter.getFileExtension();
-        edgeFilePath = filePath + "edgefile_"+String.valueOf(thread) + formatter.getFileExtension();
+        nodeFilePath = this.formatter.getNodeFilePath(thread);
+        edgeFilePath = this.formatter.getEdgeFilePath(thread);
 
         try {
-            nodeFile = new FileWriter(nodeFilePath);
-            edgeFile = new FileWriter(edgeFilePath);
+            nodeFileWriter = new FileWriter(nodeFilePath);
+            edgeFileWriter = new FileWriter(edgeFilePath);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -49,10 +46,12 @@ public class FileStore extends AbstractStore{
     @Override
     public void store(DataObject dataObject) {
         try {
-            nodeFile.write(formatter.format(dataObject)+"\n");
+            nodeFileWriter.write(formatter.format(dataObject) + "\n");
 
-            for(String key : dataObject.getNestedRelationshipKeys() ){
-                store(dataObject.getNestedRelationship(key));
+            if (formatter.hasSeparateRelationshipHandling()) {
+                for (String key : dataObject.getNestedRelationshipKeys()) {
+                    store(dataObject.getNestedRelationship(key));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,7 +61,7 @@ public class FileStore extends AbstractStore{
     @Override
     public void store(Relationship relationship) {
         try {
-            edgeFile.write(formatter.format(relationship)+"\n");
+            edgeFileWriter.write(formatter.format(relationship) + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,8 +70,8 @@ public class FileStore extends AbstractStore{
     @Override
     public void close() {
         try {
-            nodeFile.close();
-            edgeFile.close();
+            nodeFileWriter.close();
+            edgeFileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

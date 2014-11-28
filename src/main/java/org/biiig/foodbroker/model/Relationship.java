@@ -6,4 +6,6 @@ package org.biiig.foodbroker.model;
 public interface Relationship extends PropertyContainer {
     public DataObject getStartDataObject();
     public DataObject getEndDataObject();
+    public String getStartAlias();
+    public String getEndAlias();
 }
