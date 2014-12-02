@@ -1,12 +1,16 @@
 package org.biiig.foodbroker.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by peet on 21.11.14.
  */
 public class PurchOrder extends AbstractERPTransactionalDataObject {
+
+    private List<PurchOrderLine> lines = new ArrayList<>();
 
     public PurchOrder(){
         setNum("POR",12);
@@ -30,5 +34,13 @@ public class PurchOrder extends AbstractERPTransactionalDataObject {
 
     public void setServes(SalesOrder serves) {
         this.nestedRelationships.put("serves",serves);
+    }
+
+    public List<PurchOrderLine> getLines() {
+        return lines;
+    }
+
+    public void addLine(PurchOrderLine purchOrderLine) {
+        this.lines.add(purchOrderLine);
     }
 }

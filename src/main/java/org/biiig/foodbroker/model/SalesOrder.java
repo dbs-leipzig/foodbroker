@@ -1,15 +1,16 @@
 package org.biiig.foodbroker.model;
 
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by peet on 20.11.14.
  */
 public class SalesOrder extends AbstractERPTransactionalDataObject {
 
+    private List<SalesOrderLine> lines = new ArrayList<>();
+
     public SalesOrder(){
-        this.setNum("SQR", 12);
+        this.setNum("SOR", 12);
     }
 
     public void setDeliveryDate(Date deliveryDate) {
@@ -34,5 +35,17 @@ public class SalesOrder extends AbstractERPTransactionalDataObject {
 
     public void setBasedOn(SalesQuotation basedOn) {
         this.nestedRelationships.put("basedOn",basedOn);
+    }
+
+    public Date getDeliveryDate() {
+        return (Date) this.properties.get("deliveryDate");
+    }
+
+    public void addLine(SalesOrderLine line){
+        this.lines.add(line);
+    }
+
+    public List<SalesOrderLine> getLines() {
+        return lines;
     }
 }

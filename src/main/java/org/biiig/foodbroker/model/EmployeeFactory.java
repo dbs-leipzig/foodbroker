@@ -57,4 +57,8 @@ public class EmployeeFactory extends AbstractMasterDataFactory {
                 "JOIN  first_names f\n" +
                 "ORDER BY 1,2;";
     }
+
+    public List<Employee> getEmployees() {
+        return employees;
+    }
 }

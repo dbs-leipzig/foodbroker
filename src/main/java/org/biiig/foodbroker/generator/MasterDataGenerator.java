@@ -23,21 +23,21 @@ public class MasterDataGenerator {
     private final CustomerFactory customerFactory = new CustomerFactory();
     private final LogisticsFactory logisticsFactory = new LogisticsFactory();
     private final VendorFactory vendorFactory = new VendorFactory();
-    private final List<MasterDataFactory> masterDataFactories = new ArrayList<>();
-
-
 
     public MasterDataGenerator(int scaleFactor, Store store) {
         this.scaleFactor = scaleFactor;
         this.store = store;
+    }
+
+    public void generate() {
+
+        List<MasterDataFactory> masterDataFactories = new ArrayList<>();
         masterDataFactories.add(employeeFactory);
         masterDataFactories.add(productFactory);
         masterDataFactories.add(customerFactory);
         masterDataFactories.add(logisticsFactory);
         masterDataFactories.add(vendorFactory);
-    }
 
-    public void generate() {
         store.open();
 
         for (MasterDataFactory masterDataFactory : masterDataFactories) {
@@ -63,6 +63,13 @@ public class MasterDataGenerator {
 
                 store.store(object);
             }
+        }
+
+        List<Employee> employees = employeeFactory.getEmployees();
+        for(Employee employee : employees) {
+            User user = new User(employee);
+            employee.setUser(user);
+            store.store(user);
         }
 
         store.close();

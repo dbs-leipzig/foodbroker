@@ -1,11 +1,14 @@
 package org.biiig.foodbroker;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.lang.time.StopWatch;
 import org.biiig.foodbroker.formatter.Formatter;
 import org.biiig.foodbroker.formatter.FormatterFactory;
 import org.biiig.foodbroker.formatter.JSONFormatterFactory;
 import org.biiig.foodbroker.formatter.SQLFormatterFactory;
 import org.biiig.foodbroker.generator.MasterDataGenerator;
+import org.biiig.foodbroker.model.AbstractDataObject;
+import org.biiig.foodbroker.model.AbstractRelationship;
 import org.biiig.foodbroker.simulation.BusinessProcess;
 import org.biiig.foodbroker.simulation.BusinessProcessRunner;
 import org.biiig.foodbroker.simulation.FoodBrokerage;
@@ -43,6 +46,9 @@ public class FoodBroker {
      * @throws ParseException
      */
     public static void main(String[] args) throws ParseException {
+
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
 
         // create and parse options
         Options options = new Options();
@@ -99,6 +105,17 @@ public class FoodBroker {
 
             // merge files
             storeCombiner.combine();
+
+            stopWatch.stop();
+
+            System.out.println("Data Objects,Relationships,Milliseconds");
+
+            System.out.println(String.format(
+                    "%s,%s,%s",
+                    AbstractDataObject.getInstanceCount(),
+                    AbstractRelationship.getInstanceCount(),
+                    stopWatch.getTime()
+            ));
         }
     }
 

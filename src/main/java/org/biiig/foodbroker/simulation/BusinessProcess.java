@@ -12,7 +12,6 @@ import java.util.List;
  */
 public interface BusinessProcess {
     void start(Date startDate);
-    List<TransactionalDataObject> getTransactionalDataObjects();
     ProcessConfiguration getConfig();
     Store getStore();
 }

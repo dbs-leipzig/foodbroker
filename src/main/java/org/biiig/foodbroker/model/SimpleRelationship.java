@@ -6,6 +6,7 @@ package org.biiig.foodbroker.model;
 public class SimpleRelationship extends AbstractRelationship {
 
     public SimpleRelationship(DataObject startDataObject, DataObject endDataObject,String type){
+        super();
         this.startDataObject = startDataObject;
         this.endDataObject = endDataObject;
         this.metaData.put("type",type);

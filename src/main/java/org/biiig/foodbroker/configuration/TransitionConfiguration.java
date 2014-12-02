@@ -28,33 +28,27 @@ public class TransitionConfiguration {
 
     public boolean happens (List<MasterDataObject> influencingMasterDataObjects ){
         float value = (float) Math.random();
+        float chance = baseValue;
 
         for(MasterDataObject object : influencingMasterDataObjects){
             if (object.getQuality() == "good"){
                 if (higherIsBetter){
-                    value += influence;
+                    chance += influence;
                 }
                 else {
-                    value -= influence;
+                    chance -= influence;
                 }
             }
             else if (object.getQuality() == "bad"){
                 if (higherIsBetter){
-                    value -= influence;
+                    chance -= influence;
                 }
                 else {
-                    value += influence;
+                    chance += influence;
                 }
             }
         }
 
-        if(value < 0){
-            value = 0.0f;
-        }
-        else if (value > 1 ){
-            value = 1.0f;
-        }
-
-        return value >= baseValue;
+        return value <= chance;
     }
 }

@@ -7,6 +7,8 @@ import java.math.BigDecimal;
  */
 public class PurchOrderLine extends AbstractERPOrderLine {
 
+    private SalesOrderLine salesOrderLine;
+
     public BigDecimal getPurchPrice() {
         return (BigDecimal) this.properties.get("purchPrice");
     }
@@ -21,5 +23,13 @@ public class PurchOrderLine extends AbstractERPOrderLine {
 
     public PurchOrder getPartOf(){
         return (PurchOrder) getStartDataObject();
+    }
+
+    public SalesOrderLine getSalesOrderLine() {
+        return salesOrderLine;
+    }
+
+    public void setSalesOrderLine(SalesOrderLine salesOrderLine) {
+        this.salesOrderLine = salesOrderLine; 
     }
 }

@@ -32,4 +32,8 @@ public abstract class AbstractDataObject extends AbstractPropertyContainer imple
     public SimpleRelationship getNestedRelationship(String key) {
         return new SimpleRelationship(this,this.nestedRelationships.get(key),key);
     }
+
+    public static long getInstanceCount() {
+        return instanceCount.longValue();
+    }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class AbstractMasterDataPile implements MasterDataPile {
     private int currentIndex = 0;
     private final int lastIndex;
-    private final List<Integer> ids = new ArrayList<>();
+    private List<Integer> ids = new ArrayList<>();
 
     public AbstractMasterDataPile(int size){
         lastIndex = size-1;

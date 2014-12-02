@@ -28,4 +28,8 @@ public class DeliveryNote extends AbstractERPTransactionalDataObject {
     public void setTrackingCode(String trackingCode) {
         this.properties.put("trackingCode",trackingCode);
     }
+
+    public PurchOrder getContains() {
+        return (PurchOrder) this.nestedRelationships.get("contains");
+    }
 }

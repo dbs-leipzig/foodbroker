@@ -22,6 +22,8 @@ public class FoodBrokerage implements BusinessProcess {
     private final LogisticsPile logisticsPile;
     private final ProductPile productPile;
     private final VendorPile vendorPile;
+    private List<DeliveryNote> deliveryNotes;
+    private SalesOrder salesOrder;
 
     public FoodBrokerage(MasterDataGenerator generator,Store store){
         this.store = store;
@@ -48,7 +50,7 @@ public class FoodBrokerage implements BusinessProcess {
         List<SalesQuotationLine> salesQuotationLines = newSalesQuotationLines(salesQuotation);
 
         if (confirmed(salesQuotation)){
-            SalesOrder salesOrder = newSalesOrder(salesQuotation);
+            salesOrder = newSalesOrder(salesQuotation);
             // keys are distinct product categories
             List<SalesOrderLine> salesOrderLines = newSalesOrderLines(salesOrder,salesQuotationLines);
 
@@ -56,14 +58,17 @@ public class FoodBrokerage implements BusinessProcess {
 
             List<PurchOrderLine> purchOrderLines = newPurchOrderLines(purchOrders,salesOrderLines);
 
-            //List<DeliveryNote> deliveryNotes =
-            newDeliveryNotes(purchOrders);
+            deliveryNotes = newDeliveryNotes(purchOrders);
 
             //List<PurchInvoice> purchInvoices =
             newPurchInvoices(purchOrderLines);
 
             //SalesInvoice salesInvoice =
             newSalesInvoice(salesOrderLines);
+
+            ComplaintHandling complaintHandling = new ComplaintHandling(this, employeePile);
+            complaintHandling.start(startDate);
+
         }
 
     }
@@ -168,10 +173,9 @@ public class FoodBrokerage implements BusinessProcess {
 
         for(SalesQuotationLine salesQuotationLine : salesQuotationLines){
             // TODO line confirmationProbability
-
-            salesOrderLines.add(
-                    newSalesOrderLine(salesOrder, salesQuotationLine)
-            );
+            SalesOrderLine salesOrderLine =  newSalesOrderLine(salesOrder, salesQuotationLine);
+            salesOrderLines.add(salesOrderLine);
+            salesOrder.addLine(salesOrderLine);
         }
 
         return salesOrderLines;
@@ -239,7 +243,9 @@ public class FoodBrokerage implements BusinessProcess {
             }
 
             PurchOrder purchOrder = purchOrders.get(purchOrderIndex);
-            purchOrderLines.add(newPurchOrderLine(purchOrder,salesOrderLine));
+            PurchOrderLine purchOrderLine = newPurchOrderLine(purchOrder,salesOrderLine);
+            purchOrder.addLine(purchOrderLine);
+            purchOrderLines.add(purchOrderLine);
         }
 
         return purchOrderLines;
@@ -247,6 +253,9 @@ public class FoodBrokerage implements BusinessProcess {
 
     private PurchOrderLine newPurchOrderLine(PurchOrder purchOrder, SalesOrderLine salesOrderLine) {
         PurchOrderLine purchOrderLine = new PurchOrderLine();
+
+        purchOrderLine.setSalesOrderLine(salesOrderLine);
+        salesOrderLine.setPurchOrderLine(purchOrderLine);
 
         purchOrderLine.setContains(salesOrderLine.getContains());
         purchOrderLine.setQuantity(salesOrderLine.getQuantity());
@@ -358,9 +367,11 @@ public class FoodBrokerage implements BusinessProcess {
         return salesInvoice;
     }
 
+    public List<DeliveryNote> getDeliveryNotes() {
+        return deliveryNotes;
+    }
 
-    @Override
-    public List<TransactionalDataObject> getTransactionalDataObjects() {
-        return null;
+    public SalesOrder getSalesOrder() {
+        return salesOrder;
     }
 }
