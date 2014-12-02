@@ -104,4 +104,44 @@ public class SQLFormatter extends AbstractFormatter {
     public boolean hasSeparateRelationshipHandling() {
         return false;
     }
+
+    @Override
+    public String getNodeOpeningFilePath() {
+        return "src/main/resources/createTables.sql";
+    }
+
+    @Override
+    public String getNodeFinishFilePath() {
+        return "src/main/resources/createKeys.sql";
+    }
+
+    @Override
+    public String getEdgeOpeningFilePath() {
+        return null;
+    }
+
+    @Override
+    public String getEdgeFinishFilePath() {
+        return null;
+    }
+
+    @Override
+    public boolean requiresNodeOpening() {
+        return true;
+    }
+
+    @Override
+    public boolean requiresNodeFinish() {
+        return true;
+    }
+
+    @Override
+    public boolean requiresEdgeOpening() {
+        return false;
+    }
+
+    @Override
+    public boolean requiresEdgeFinish() {
+        return false;
+    }
 }

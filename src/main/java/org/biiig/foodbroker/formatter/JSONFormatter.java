@@ -75,4 +75,44 @@ public class JSONFormatter extends AbstractFormatter {
     public boolean hasSeparateRelationshipHandling() {
         return true;
     }
+
+    @Override
+    public String getNodeOpeningFilePath() {
+        return null;
+    }
+
+    @Override
+    public String getNodeFinishFilePath() {
+        return null;
+    }
+
+    @Override
+    public String getEdgeOpeningFilePath() {
+        return null;
+    }
+
+    @Override
+    public String getEdgeFinishFilePath() {
+        return null;
+    }
+
+    @Override
+    public boolean requiresNodeOpening() {
+        return false;
+    }
+
+    @Override
+    public boolean requiresNodeFinish() {
+        return false;
+    }
+
+    @Override
+    public boolean requiresEdgeOpening() {
+        return false;
+    }
+
+    @Override
+    public boolean requiresEdgeFinish() {
+        return false;
+    }
 }

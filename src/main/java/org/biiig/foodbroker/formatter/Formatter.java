@@ -21,6 +21,14 @@ public interface Formatter {
     String getNodeFilePath(int thread);
     String getEdgeFilePath(int thread);
     String getDataFilePath();
+    String getNodeOpeningFilePath();
+    String getNodeFinishFilePath();
+    String getEdgeOpeningFilePath();
+    String getEdgeFinishFilePath();
     boolean hasSeparateRelationshipHandling();
+    boolean requiresNodeOpening();
+    boolean requiresNodeFinish();
+    boolean requiresEdgeOpening();
+    boolean requiresEdgeFinish();
 
 }

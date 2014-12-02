@@ -42,6 +42,22 @@ public class FileStoreCombiner extends AbstractStoreCombiner {
                 edgeFileWriter = nodeFileWriter;
             }
 
+            if(formatter.requiresNodeOpening()){
+                File nodeFile = new File(formatter.getNodeOpeningFilePath());
+                LineIterator nodeIterator = FileUtils.lineIterator(nodeFile);
+                while(nodeIterator.hasNext()){
+                    nodeFileWriter.write(nodeIterator.nextLine()+"\n");
+                }
+            }
+
+            if(formatter.requiresEdgeOpening()){
+                File edgeFile = new File(formatter.getEdgeOpeningFilePath());
+                LineIterator edgeIterator = FileUtils.lineIterator(edgeFile);
+                while(edgeIterator.hasNext()){
+                    nodeFileWriter.write(edgeIterator.nextLine()+"\n");
+                }
+            }
+
             for (FileStore fileStore : this.fileStores){
                 File nodeFile = new File(fileStore.getNodeFilePath());
                 LineIterator nodeIterator = FileUtils.lineIterator(nodeFile);
@@ -62,6 +78,22 @@ public class FileStoreCombiner extends AbstractStoreCombiner {
 
                 edgeIterator.close();
                 edgeFile.delete();
+            }
+
+            if(formatter.requiresNodeFinish()){
+                File nodeFile = new File(formatter.getNodeFinishFilePath());
+                LineIterator nodeIterator = FileUtils.lineIterator(nodeFile);
+                while(nodeIterator.hasNext()){
+                    nodeFileWriter.write(nodeIterator.nextLine()+"\n");
+                }
+            }
+
+            if(formatter.requiresEdgeFinish()){
+                File edgeFile = new File(formatter.getEdgeFinishFilePath());
+                LineIterator edgeIterator = FileUtils.lineIterator(edgeFile);
+                while(edgeIterator.hasNext()){
+                    nodeFileWriter.write(edgeIterator.nextLine()+"\n");
+                }
             }
 
             nodeFileWriter.close();

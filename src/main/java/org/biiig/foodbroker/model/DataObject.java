@@ -1,5 +1,6 @@
 package org.biiig.foodbroker.model;
 
+import java.util.Map;
 import java.util.Set;
 
 /**

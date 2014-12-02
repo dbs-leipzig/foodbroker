@@ -18,28 +18,27 @@ public class MasterDataGenerator {
     private int scaleFactor;
     private Store store;
 
-    private EmployeeFactory employeeFactory = new EmployeeFactory();
-    private ProductFactory productFactory = new ProductFactory();
-    private CustomerFactory customerFactory = new CustomerFactory();
-    private LogisticsFactory logisticsFactory = new LogisticsFactory();
-    private VendorFactory vendorFactory = new VendorFactory();
+    private final EmployeeFactory employeeFactory = new EmployeeFactory();
+    private final ProductFactory productFactory = new ProductFactory();
+    private final CustomerFactory customerFactory = new CustomerFactory();
+    private final LogisticsFactory logisticsFactory = new LogisticsFactory();
+    private final VendorFactory vendorFactory = new VendorFactory();
+    private final List<MasterDataFactory> masterDataFactories = new ArrayList<>();
+
+
 
     public MasterDataGenerator(int scaleFactor, Store store) {
         this.scaleFactor = scaleFactor;
         this.store = store;
-    }
-
-    public void generate() {
-
-        store.open();
-
-        List<MasterDataFactory> masterDataFactories = new ArrayList<>();
-
         masterDataFactories.add(employeeFactory);
         masterDataFactories.add(productFactory);
         masterDataFactories.add(customerFactory);
         masterDataFactories.add(logisticsFactory);
         masterDataFactories.add(vendorFactory);
+    }
+
+    public void generate() {
+        store.open();
 
         for (MasterDataFactory masterDataFactory : masterDataFactories) {
             MasterDataConfiguration config = new MasterDataConfiguration(masterDataFactory.getInstanceClassName(), scaleFactor);

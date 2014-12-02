@@ -28,6 +28,6 @@ public abstract class AbstractMasterDataPile implements MasterDataPile {
         else{
             currentIndex++;
         }
-        return currentIndex;
+        return ids.get(currentIndex);
     }
 }
