@@ -39,31 +39,19 @@ public class FoodBroker {
     combines the stores from multiple threads
      */
     private static StoreCombiner storeCombiner = null;
+    private static boolean combine = false;
 
     /**
      * main method
      * @param args
      * @throws ParseException
      */
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args){
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        // create and parse options
-        Options options = new Options();
-        options.addOption("s", "scale", true, "Set Scale Factor");
-        options.addOption("r", "store", true, "Choose Store");
-        options.addOption("f", "format", true, "Choose Output format");
-
-        // parse options
-        CommandLineParser parser = new BasicParser();
-        CommandLine commandLine = parser.parse(options, args);
-
-        // validate options
-        validateScaleFactor(commandLine);
-        validateFormat(commandLine);
-        validateStore(commandLine);
+        parseOptions(args);
 
         if(allOptionsProvidedAndValid){
 
@@ -74,6 +62,19 @@ public class FoodBroker {
 
             MasterDataGenerator masterDataGenerator = new MasterDataGenerator(scaleFactor,masterDataStore);
             masterDataGenerator.generate();
+
+            stopWatch.stop();
+            long masterDataObjectCount = AbstractDataObject.getInstanceCount();
+            long masterDateGenerationTime = stopWatch.getTime();
+
+            System.out.println(String.format(
+                    "%s master data objects created within %s milliseconds",
+                    masterDataObjectCount,
+                    masterDateGenerationTime
+                    ));
+
+            stopWatch.reset();
+            stopWatch.start();
 
             // prepare parallel simulation
 
@@ -103,19 +104,67 @@ public class FoodBroker {
                 }
             }
 
-            // merge files
-            storeCombiner.combine();
-
             stopWatch.stop();
 
-            System.out.println("Data Objects,Relationships,Milliseconds");
+            long transactionalDataObjectCount = AbstractDataObject.getInstanceCount() - masterDataObjectCount;
+            long relationshipCount = AbstractRelationship.getInstanceCount();
+            long simulationTime = stopWatch.getTime();
 
             System.out.println(String.format(
-                    "%s,%s,%s",
-                    AbstractDataObject.getInstanceCount(),
-                    AbstractRelationship.getInstanceCount(),
-                    stopWatch.getTime()
+                    "%s transactional data objects and %s relationships created within %s milliseconds",
+                    transactionalDataObjectCount,
+                    relationshipCount,
+                    simulationTime
             ));
+
+            stopWatch.reset();
+            stopWatch.start();
+
+            // merge files
+            if(combine){
+                storeCombiner.combine();
+                stopWatch.stop();
+                System.out.println(String.format(
+                        "file combination took %s milliseconds",
+                        stopWatch.getTime()
+                ));
+
+            }
+
+        }
+    }
+
+    private static void parseOptions(String[] args){
+        // create and parse options
+        Options options = new Options();
+        options.addOption("s", "scale", true, "Set Scale Factor");
+        options.addOption("r", "store", true, "Choose Store");
+        options.addOption("f", "format", true, "Choose Output format");
+        options.addOption("c", "combine", false, "Combine output files");
+
+        // parse options
+        CommandLineParser parser = new BasicParser();
+        CommandLine commandLine = null;
+        try {
+            commandLine = parser.parse(options, args);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // validate options
+        validateScaleFactor(commandLine);
+        validateFormat(commandLine);
+        validateStore(commandLine);
+        validateCombine(commandLine);
+    }
+
+    private static void validateCombine(CommandLine commandLine) {
+        if(commandLine.hasOption("combine") && storeFactory instanceof FileStoreFactory && formatterFactory != null){
+            storeCombiner = new FileStoreCombiner(formatterFactory.newInstance());
+            combine = true;
+        }
+        else {
+            storeCombiner = new DummyStoreCombiner();
         }
     }
 
@@ -125,11 +174,9 @@ public class FoodBroker {
 
             if(storeClass.equals("console")){
                 storeFactory = new ConsoleStoreFactory();
-                storeCombiner = new DummyStoreCombiner();
             }
             else if (storeClass.equals("file")){
                 storeFactory = new FileStoreFactory();
-                storeCombiner = new FileStoreCombiner(formatterFactory.newInstance());
             }
             else{
                 System.out.println("Unknown store : " + storeClass);
