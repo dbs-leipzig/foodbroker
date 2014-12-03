@@ -77,16 +77,17 @@ public class MasterDataGenerator {
     }
 
     private List<Map<String, Object>> getBaseValueList(MasterDataConfiguration config, MasterDataFactory factory) {
-        List<Map<String, Object>> baseValueList = new ArrayList();
+        List<Map<String, Object>> baseValueList = new ArrayList<>();
 
         try {
             Class.forName("org.sqlite.JDBC");
-            String DB_PATH = "/home/peet/IdeaProjects/FoodBroker/src/main/resources/baseValues.sqlite";
+            String DB_PATH = MasterDataGenerator.class.getResource
+              ("/baseValues.sqlite").getPath();
             Connection connection = DriverManager.getConnection("jdbc:sqlite:" + DB_PATH);
             Statement statement = connection.createStatement();
 
             ResultSet rowCountResultSet = statement.executeQuery(factory.getRowCountSql());
-            int rowCount = 0;
+            int rowCount;
             rowCountResultSet.next();
             rowCount = rowCountResultSet.getInt(1);
             rowCountResultSet.close();
@@ -98,7 +99,7 @@ public class MasterDataGenerator {
             ResultSetMetaData baseValueResultSetMetaData = baseValueResultSet.getMetaData();
             while (baseValueResultSet.next()) {
                 if (baseValueResultSet.getRow() % divisor == 0) {
-                    Map<String, Object> baseValues = new HashMap();
+                    Map<String, Object> baseValues = new HashMap<>();
                     for (int i = 1; i <= baseValueResultSetMetaData.getColumnCount(); i++) {
                         baseValues.put(baseValueResultSetMetaData.getColumnLabel(i), baseValueResultSet.getObject(i));
                     }
@@ -108,9 +109,7 @@ public class MasterDataGenerator {
             baseValueResultSet.close();
             connection.close();
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

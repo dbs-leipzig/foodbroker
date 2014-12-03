@@ -107,12 +107,12 @@ public class SQLFormatter extends AbstractFormatter {
 
     @Override
     public String getNodeOpeningFilePath() {
-        return "src/main/resources/createTables.sql";
+        return SQLFormatter.class.getResource("/createTables.sql").getPath();
     }
 
     @Override
     public String getNodeFinishFilePath() {
-        return "src/main/resources/createKeys.sql";
+        return SQLFormatter.class.getResource("/createKeys.sql").getPath();
     }
 
     @Override
