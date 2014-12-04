@@ -1,10 +1,22 @@
 package org.biiig.foodbroker.generator;
 
-import org.biiig.foodbroker.model.*;
 import org.biiig.foodbroker.configuration.MasterDataConfiguration;
+import org.biiig.foodbroker.model.CustomerFactory;
+import org.biiig.foodbroker.model.Employee;
+import org.biiig.foodbroker.model.EmployeeFactory;
+import org.biiig.foodbroker.model.LogisticsFactory;
+import org.biiig.foodbroker.model.MasterDataFactory;
+import org.biiig.foodbroker.model.MasterDataObject;
+import org.biiig.foodbroker.model.ProductFactory;
+import org.biiig.foodbroker.model.User;
+import org.biiig.foodbroker.model.VendorFactory;
 import org.biiig.foodbroker.stores.Store;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,8 +93,8 @@ public class MasterDataGenerator {
 
         try {
             Class.forName("org.sqlite.JDBC");
-            String DB_PATH = MasterDataGenerator.class.getResource
-              ("/baseValues.sqlite").getPath();
+            String DB_PATH = MasterDataGenerator.class.getClassLoader()
+              .getResource("baseValues.sqlite").getPath();
             Connection connection = DriverManager.getConnection("jdbc:sqlite:" + DB_PATH);
             Statement statement = connection.createStatement();
 
