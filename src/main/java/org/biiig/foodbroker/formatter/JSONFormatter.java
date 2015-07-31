@@ -35,6 +35,7 @@ public class JSONFormatter extends AbstractFormatter {
     public String format(Relationship relationship) {
         JSONObject json = new JSONObject();
 
+        json.put("id",relationship.getID());
         json.put("start",relationship.getStartDataObject().getID());
         json.put("end",relationship.getEndDataObject().getID());
         json.put("data", getProperties(relationship));
