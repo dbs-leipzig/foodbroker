@@ -9,7 +9,7 @@ public class SimpleRelationship extends AbstractRelationship {
         super();
         this.startDataObject = startDataObject;
         this.endDataObject = endDataObject;
-        this.metaData.put("type",type);
+        this.metaData.put("label",type);
     }
 
     @Override

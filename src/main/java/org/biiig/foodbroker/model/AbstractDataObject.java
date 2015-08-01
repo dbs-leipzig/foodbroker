@@ -12,7 +12,7 @@ public abstract class AbstractDataObject extends AbstractPropertyContainer imple
     protected Map<String,DataObject> nestedRelationships = new HashMap<>();
 
     public AbstractDataObject() {
-        this.metaData.put("class",this.getClass().getSimpleName());
+        this.metaData.put("label",this.getClass().getSimpleName());
     }
 
     @Override

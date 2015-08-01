@@ -51,7 +51,9 @@ public class FoodBroker {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        parseOptions(args);
+        if (!parseOptions(args)) {
+            return;
+        }
 
         if(allOptionsProvidedAndValid){
 
@@ -134,13 +136,19 @@ public class FoodBroker {
         }
     }
 
-    private static void parseOptions(String[] args){
+    private static boolean parseOptions(String[] args){
         // create and parse options
         Options options = new Options();
-        options.addOption("s", "scale", true, "Set Scale Factor");
-        options.addOption("r", "store", true, "Choose Store");
-        options.addOption("f", "format", true, "Choose Output format");
+        options.addOption("s", "scale", true, "Set Scale Factor [1..10000]");
+        options.addOption("o", "output", true, "Choose Output [console, file]");
+        options.addOption("f", "format", true, "Choose Output format [json, sql]");
         options.addOption("c", "combine", false, "Combine output files");
+
+        if (args.length == 0) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp(FoodBroker.class.getName(), options, true);
+            return false;
+        }
 
         // parse options
         CommandLineParser parser = new BasicParser();
@@ -156,6 +164,8 @@ public class FoodBroker {
         validateFormat(commandLine);
         validateStore(commandLine);
         validateCombine(commandLine);
+
+        return true;
     }
 
     private static void validateCombine(CommandLine commandLine) {
@@ -169,8 +179,8 @@ public class FoodBroker {
     }
 
     private static void validateStore(CommandLine commandLine) {
-        if(commandLine.hasOption("store")){
-            String storeClass = commandLine.getOptionValue("store");
+        if(commandLine.hasOption("output")){
+            String storeClass = commandLine.getOptionValue("output");
 
             if(storeClass.equals("console")){
                 storeFactory = new ConsoleStoreFactory();
@@ -179,7 +189,7 @@ public class FoodBroker {
                 storeFactory = new FileStoreFactory();
             }
             else{
-                System.out.println("Unknown store : " + storeClass);
+                System.out.println("Unknown output : " + storeClass);
                 allOptionsProvidedAndValid = false;
             }
         }

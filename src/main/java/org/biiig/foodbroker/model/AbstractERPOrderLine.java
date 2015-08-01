@@ -7,7 +7,7 @@ public abstract class AbstractERPOrderLine extends AbstractRelationship {
 
     public AbstractERPOrderLine() {
         super();
-        this.metaData.put("type",this.getClass().getSimpleName());
+        this.metaData.put("label",this.getClass().getSimpleName());
         this.metaData.put("system","ERP");
     }
 

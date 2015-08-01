@@ -16,6 +16,12 @@ public class JSONFormatter extends AbstractFormatter {
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd");
 
+    private static final String ID = "id";
+    private static final String DATA = "data";
+    private static final String META = "meta";
+    private static final String SOURCE = "source";
+    private static final String TARGET = "target";
+
     @Override
     public String getFileExtension() {
         return ".json";
@@ -24,9 +30,9 @@ public class JSONFormatter extends AbstractFormatter {
     public String format (DataObject dataObject){
         JSONObject json = new JSONObject();
 
-        json.put("id", dataObject.getID());
-        json.put("data", getProperties(dataObject));
-        json.put("meta", getMetaData(dataObject));
+        json.put(ID, dataObject.getID());
+        json.put(DATA, getProperties(dataObject));
+        json.put(META, getMetaData(dataObject));
 
         return json.toString();
     }
@@ -35,11 +41,11 @@ public class JSONFormatter extends AbstractFormatter {
     public String format(Relationship relationship) {
         JSONObject json = new JSONObject();
 
-        json.put("id",relationship.getID());
-        json.put("start",relationship.getStartDataObject().getID());
-        json.put("end",relationship.getEndDataObject().getID());
-        json.put("data", getProperties(relationship));
-        json.put("meta", getMetaData(relationship));
+        json.put(ID,relationship.getID());
+        json.put(SOURCE,relationship.getStartDataObject().getID());
+        json.put(TARGET,relationship.getEndDataObject().getID());
+        json.put(DATA, getProperties(relationship));
+        json.put(META, getMetaData(relationship));
 
         return json.toString();
     }
