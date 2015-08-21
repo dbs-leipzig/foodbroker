@@ -19,9 +19,7 @@ public class SQLFormatter extends AbstractFormatter {
     @Override
     public String format(DataObject dataObject) {
         String insertStmt = String.format("INSERT INTO `%s`.`%s`(",
-                dataObject.getMetaData("system"),
-                dataObject.getMetaData("class")
-        );
+          dataObject.getMetaData("system"), dataObject.getMetaData("class"));
 
         Map<String,Object> fields = new HashMap<>();
 
@@ -38,9 +36,7 @@ public class SQLFormatter extends AbstractFormatter {
     @Override
     public String format(Relationship relationship) {
         String insertStmt = String.format("INSERT INTO `%s`.`%s`(",
-                relationship.getMetaData("system"),
-                relationship.getMetaData("type")
-        );
+          relationship.getMetaData("system"), relationship.getMetaData("type"));
 
         Map<String,Object> fields = new HashMap<>();
 
@@ -58,41 +54,40 @@ public class SQLFormatter extends AbstractFormatter {
                     .getProperty(key));
         }
 
+      StringBuilder insertStmtBuilder = new StringBuilder();
+
         boolean isFirstColumn = true;
 
         for (String column : fields.keySet()){
-            insertStmt += String.format("%s`%s`",
-                    (isFirstColumn ? "" : ","),
-                    column
-            );
+            insertStmtBuilder.append(
+              String.format("%s`%s`", (isFirstColumn ? "" : ","), column));
             isFirstColumn = false;
         }
         isFirstColumn = true;
 
-        insertStmt += ") VALUES (";
+        insertStmtBuilder.append(") VALUES (");
 
         for (String column : fields.keySet()){
             Object value = fields.get(column);
 
-            String stringValue;
+            StringBuilder stringBuilder = new StringBuilder();
             if (value instanceof Number){
-                stringValue = String.valueOf(value);
+                stringBuilder.append(String.valueOf(value));
             }
             else if (value instanceof Date) {
-                stringValue = String.format("'%s'",dateFormatter.format((Date) value));
+                stringBuilder.append(
+                  String.format("'%s'", dateFormatter.format((Date) value)));
             }
             else {
-                stringValue = String.format("'%s'",value.toString());
+                stringBuilder.append(String.format("'%s'",value.toString()));
             }
-            insertStmt += String.format("%s%s",
-                    (isFirstColumn ? "" : ","),
-                    stringValue
-            );
+          insertStmtBuilder.append(String.
+            format("%s%s", (isFirstColumn ? "" : ","), stringBuilder.toString()));
             isFirstColumn = false;
         }
-        insertStmt += ");";
+        insertStmtBuilder.append(");");
 
-        return insertStmt;
+        return insertStmtBuilder.toString();
     }
 
     @Override

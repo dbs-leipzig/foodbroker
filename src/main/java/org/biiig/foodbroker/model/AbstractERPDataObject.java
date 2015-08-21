@@ -13,12 +13,12 @@ public abstract class AbstractERPDataObject extends AbstractDataObject {
     protected void setNum(String prefix, int length) {
         String idString = String.valueOf(id);
         int fillCharCount = length - idString.length() - prefix.length();
-
+        StringBuilder propertyStringBuilder = new StringBuilder(prefix);
         for (int i = 1; i <= fillCharCount; i++) {
-            prefix += "0";
+            propertyStringBuilder.append("0");
         }
 
-        this.properties.put("num",prefix + idString);
+        this.properties.put("num",propertyStringBuilder.append(idString).toString());
     }
 
     @Override

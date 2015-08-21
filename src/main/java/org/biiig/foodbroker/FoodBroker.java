@@ -70,10 +70,8 @@ public class FoodBroker {
             long masterDateGenerationTime = stopWatch.getTime();
 
             System.out.println(String.format(
-                    "%s master data objects created within %s milliseconds",
-                    masterDataObjectCount,
-                    masterDateGenerationTime
-                    ));
+              "%s master data objects created within %s milliseconds",
+              masterDataObjectCount, masterDateGenerationTime));
 
             stopWatch.reset();
             stopWatch.start();
@@ -127,16 +125,15 @@ public class FoodBroker {
                 storeCombiner.combine();
                 stopWatch.stop();
                 System.out.println(String.format(
-                        "file combination took %s milliseconds",
-                        stopWatch.getTime()
-                ));
+                  "file combination took %s milliseconds", stopWatch.getTime
+                    ()));
 
             }
 
         }
     }
 
-    private static boolean parseOptions(String[] args){
+    private static boolean parseOptions(String[] args) {
         // create and parse options
         Options options = new Options();
         options.addOption("s", "scale", true, "Set Scale Factor [1..10000]");
@@ -154,11 +151,13 @@ public class FoodBroker {
         CommandLineParser parser = new BasicParser();
         CommandLine commandLine = null;
         try {
-            commandLine = parser.parse(options, args);
+          commandLine = parser.parse(options, args);
         } catch (ParseException e) {
-            e.printStackTrace();
+          e.printStackTrace();
         }
-
+        if (commandLine == null) {
+          return false;
+        }
         // validate options
         validateScaleFactor(commandLine);
         validateFormat(commandLine);

@@ -4,9 +4,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.biiig.foodbroker.formatter.Formatter;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,93 +18,102 @@ import java.util.List;
  */
 public class FileStoreCombiner extends AbstractStoreCombiner {
 
-    private final List<FileStore> fileStores = new ArrayList();
-    private final Formatter formatter;
+  private final List<FileStore> fileStores = new ArrayList<>();
+  private final Formatter formatter;
+  private final String lineSeparator;
 
-    public FileStoreCombiner(Formatter formatter) {
-        this.formatter = formatter;
-    }
+  public FileStoreCombiner(Formatter formatter) {
+    this.formatter = formatter;
+    this.lineSeparator = System.getProperty("line.separator");
+  }
 
-    @Override
-    public void add(Store store) {
-        fileStores.add((FileStore) store);
-    }
+  @Override
+  public void add(Store store) {
+    fileStores.add((FileStore) store);
+  }
 
-    @Override
-    public void combine() {
-        try {
-            FileWriter nodeFileWriter;
-            FileWriter edgeFileWriter;
+  @Override
+  public void combine() {
+    try {
+      BufferedWriter nodeFileWriter = new BufferedWriter(new OutputStreamWriter(
+        new FileOutputStream(formatter.getNodeFilePath()),
+        Charset.forName("UTF-8")));
 
-            if(formatter.hasSeparateRelationshipHandling()){
-                nodeFileWriter = new FileWriter(formatter.getNodeFilePath());
-                edgeFileWriter = new FileWriter(formatter.getEdgeFilePath());
-            }
-            else {
-                nodeFileWriter = new FileWriter(formatter.getDataFilePath());
-                edgeFileWriter = nodeFileWriter;
-            }
+      BufferedWriter edgeFileWriter;
 
-            if(formatter.requiresNodeOpening()){
-                File nodeFile = new File(formatter.getNodeOpeningFilePath());
-                LineIterator nodeIterator = FileUtils.lineIterator(nodeFile);
-                while(nodeIterator.hasNext()){
-                    nodeFileWriter.write(nodeIterator.nextLine()+"\n");
-                }
-            }
+      if (formatter.hasSeparateRelationshipHandling()) {
+        edgeFileWriter = new BufferedWriter(new OutputStreamWriter(
+          new FileOutputStream(formatter.getEdgeFilePath()),
+          Charset.forName("UTF-8")));
 
-            if(formatter.requiresEdgeOpening()){
-                File edgeFile = new File(formatter.getEdgeOpeningFilePath());
-                LineIterator edgeIterator = FileUtils.lineIterator(edgeFile);
-                while(edgeIterator.hasNext()){
-                    nodeFileWriter.write(edgeIterator.nextLine()+"\n");
-                }
-            }
+      } else {
+        edgeFileWriter = nodeFileWriter;
+      }
 
-            for (FileStore fileStore : this.fileStores){
-                File nodeFile = new File(fileStore.getNodeFilePath());
-                LineIterator nodeIterator = FileUtils.lineIterator(nodeFile);
-
-                while(nodeIterator.hasNext()){
-                    nodeFileWriter.write(nodeIterator.nextLine()+"\n");
-                }
-
-                nodeIterator.close();
-                nodeFile.delete();
-
-                File edgeFile = new File(fileStore.getEdgeFilePath());
-                LineIterator edgeIterator = FileUtils.lineIterator(edgeFile);
-
-                while(edgeIterator.hasNext()){
-                    edgeFileWriter.write(edgeIterator.nextLine()+"\n");
-                }
-
-                edgeIterator.close();
-                edgeFile.delete();
-            }
-
-            if(formatter.requiresNodeFinish()){
-                File nodeFile = new File(formatter.getNodeFinishFilePath());
-                LineIterator nodeIterator = FileUtils.lineIterator(nodeFile);
-                while(nodeIterator.hasNext()){
-                    nodeFileWriter.write(nodeIterator.nextLine()+"\n");
-                }
-            }
-
-            if(formatter.requiresEdgeFinish()){
-                File edgeFile = new File(formatter.getEdgeFinishFilePath());
-                LineIterator edgeIterator = FileUtils.lineIterator(edgeFile);
-                while(edgeIterator.hasNext()){
-                    nodeFileWriter.write(edgeIterator.nextLine()+"\n");
-                }
-            }
-
-            nodeFileWriter.close();
-            edgeFileWriter.close();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
+      if (formatter.requiresNodeOpening()) {
+        File nodeFile = new File(formatter.getNodeOpeningFilePath());
+        LineIterator nodeIterator = FileUtils.lineIterator(nodeFile);
+        while (nodeIterator.hasNext()) {
+          nodeFileWriter.write(nodeIterator.nextLine() + lineSeparator);
         }
+      }
+
+      if (formatter.requiresEdgeOpening()) {
+        File edgeFile = new File(formatter.getEdgeOpeningFilePath());
+        LineIterator edgeIterator = FileUtils.lineIterator(edgeFile);
+        while (edgeIterator.hasNext()) {
+          nodeFileWriter.write(edgeIterator.nextLine() + lineSeparator);
+        }
+      }
+
+      for (FileStore fileStore : this.fileStores) {
+        File nodeFile = new File(fileStore.getNodeFilePath());
+        LineIterator nodeIterator = FileUtils.lineIterator(nodeFile);
+
+        while (nodeIterator.hasNext()) {
+          nodeFileWriter.write(nodeIterator.nextLine() + lineSeparator);
+        }
+
+        nodeIterator.close();
+        if (!nodeFile.delete()) {
+          System.err.println("Error while deleting " + nodeFile);
+        }
+
+        File edgeFile = new File(fileStore.getEdgeFilePath());
+        LineIterator edgeIterator = FileUtils.lineIterator(edgeFile);
+
+        while (edgeIterator.hasNext()) {
+          edgeFileWriter.write(edgeIterator.nextLine() + lineSeparator);
+        }
+
+        edgeIterator.close();
+        if (!edgeFile.delete()) {
+          System.err.println("Error while deleting " + edgeFile);
+        }
+      }
+
+      if (formatter.requiresNodeFinish()) {
+        File nodeFile = new File(formatter.getNodeFinishFilePath());
+        LineIterator nodeIterator = FileUtils.lineIterator(nodeFile);
+        while (nodeIterator.hasNext()) {
+          nodeFileWriter.write(nodeIterator.nextLine() + lineSeparator);
+        }
+      }
+
+      if (formatter.requiresEdgeFinish()) {
+        File edgeFile = new File(formatter.getEdgeFinishFilePath());
+        LineIterator edgeIterator = FileUtils.lineIterator(edgeFile);
+        while (edgeIterator.hasNext()) {
+          nodeFileWriter.write(edgeIterator.nextLine() + lineSeparator);
+        }
+      }
+
+      nodeFileWriter.close();
+      edgeFileWriter.close();
+
+
+    } catch (IOException e) {
+      e.printStackTrace();
     }
+  }
 }

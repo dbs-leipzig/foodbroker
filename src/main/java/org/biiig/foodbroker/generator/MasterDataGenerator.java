@@ -16,6 +16,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,20 +92,23 @@ public class MasterDataGenerator {
     private List<Map<String, Object>> getBaseValueList(MasterDataConfiguration config, MasterDataFactory factory) {
         List<Map<String, Object>> baseValueList = new ArrayList<>();
 
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet rowCountResultSet = null;
+        ResultSet baseValueResultSet = null;
+
         try {
             Class.forName("org.sqlite.JDBC");
-            String DB_PATH = MasterDataGenerator.class.getClassLoader()
-              .getResource("baseValues.sqlite").getPath();
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:" + DB_PATH);
-            Statement statement = connection.createStatement();
+            connection = DriverManager.getConnection("jdbc:sqlite::resource:baseValues.sqlite");
+            statement = connection.createStatement();
 
-            ResultSet rowCountResultSet = statement.executeQuery(factory.getRowCountSql());
+            rowCountResultSet = statement.executeQuery(factory.getRowCountSql());
             int rowCount;
             rowCountResultSet.next();
             rowCount = rowCountResultSet.getInt(1);
             rowCountResultSet.close();
 
-            ResultSet baseValueResultSet = statement.executeQuery(factory.getBaseValueSql());
+            baseValueResultSet = statement.executeQuery(factory.getBaseValueSql());
             int divisor = rowCount / config.getAmount();
             if (divisor == 0) divisor = 1;
 
@@ -118,11 +122,27 @@ public class MasterDataGenerator {
                     baseValueList.add(baseValues);
                 }
             }
-            baseValueResultSet.close();
-            connection.close();
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                if (baseValueResultSet != null) {
+                    baseValueResultSet.close();
+                }
+                if (rowCountResultSet != null) {
+                    rowCountResultSet.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
         }
 
         return baseValueList;
