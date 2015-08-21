@@ -22,6 +22,10 @@ public class JSONFormatter extends AbstractFormatter {
     private static final String SOURCE = "source";
     private static final String TARGET = "target";
 
+    public JSONFormatter(String directory) {
+        super(directory);
+    }
+
     @Override
     public String getFileExtension() {
         return ".json";

@@ -16,6 +16,10 @@ public class SQLFormatter extends AbstractFormatter {
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat( "yyyy-MM-dd");
 
+    public SQLFormatter(String directory) {
+      super(directory);
+    }
+
     @Override
     public String format(DataObject dataObject) {
         String insertStmt = String.format("INSERT INTO `%s`.`%s`(",

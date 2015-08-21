@@ -8,3 +8,4 @@ See http://dbs.uni-leipzig.de/file/foodbroker-wbdb2014.pdf for details.
       -f,--format <arg>   Choose Output format [json, sql]
       -o,--output <arg>   Choose Output [console, file]
       -c,--combine        Combine output files
+      -d,--directory      Define output directory for file output (default: user home)

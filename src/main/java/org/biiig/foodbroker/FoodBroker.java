@@ -39,12 +39,14 @@ public class FoodBroker {
     combines the stores from multiple threads
      */
     private static StoreCombiner storeCombiner = null;
+
+    private static String directory = null;
+
     private static boolean combine = false;
 
     /**
      * main method
      * @param args
-     * @throws ParseException
      */
     public static void main(String[] args){
 
@@ -58,7 +60,7 @@ public class FoodBroker {
         if(allOptionsProvidedAndValid){
 
             // generate master data
-            Formatter masterDataFormatter = formatterFactory.newInstance();
+            Formatter masterDataFormatter = formatterFactory.newInstance(directory);
             Store masterDataStore = storeFactory.newInstance(masterDataFormatter);
             storeCombiner.add(masterDataStore);
 
@@ -83,7 +85,7 @@ public class FoodBroker {
 
             for(int processor = 1; processor <= availableProcessors; processor++){
                 // simulate business process
-                Formatter transactionalDataFormatter = formatterFactory.newInstance();
+                Formatter transactionalDataFormatter = formatterFactory.newInstance(directory);
                 Store transactionalDataStore = storeFactory.newInstance(transactionalDataFormatter, processor);
                 storeCombiner.add(transactionalDataStore);
 
@@ -140,6 +142,7 @@ public class FoodBroker {
         options.addOption("o", "output", true, "Choose Output [console, file]");
         options.addOption("f", "format", true, "Choose Output format [json, sql]");
         options.addOption("c", "combine", false, "Combine output files");
+        options.addOption("d", "directory", true, "Output directory when using file output (default is user home)");
 
         if (args.length == 0) {
             HelpFormatter formatter = new HelpFormatter();
@@ -162,6 +165,7 @@ public class FoodBroker {
         validateScaleFactor(commandLine);
         validateFormat(commandLine);
         validateStore(commandLine);
+        validateDirectory(commandLine);
         validateCombine(commandLine);
 
         return true;
@@ -169,7 +173,7 @@ public class FoodBroker {
 
     private static void validateCombine(CommandLine commandLine) {
         if(commandLine.hasOption("combine") && storeFactory instanceof FileStoreFactory && formatterFactory != null){
-            storeCombiner = new FileStoreCombiner(formatterFactory.newInstance());
+            storeCombiner = new FileStoreCombiner(formatterFactory.newInstance(directory));
             combine = true;
         }
         else {
@@ -195,6 +199,17 @@ public class FoodBroker {
         else {
             System.out.println("no store specified");
             allOptionsProvidedAndValid = false;
+        }
+    }
+
+    private static void validateDirectory(CommandLine commandLine) {
+        if (commandLine.hasOption("directory")) {
+            directory = commandLine.getOptionValue("directory");
+            if (directory.endsWith(System.getProperty("file.separator"))) {
+                directory = directory.substring(0, directory.length() - 1);
+            }
+        } else {
+            directory = System.getProperty("user.home");
         }
     }
 

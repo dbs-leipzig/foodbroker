@@ -3,34 +3,44 @@ package org.biiig.foodbroker.formatter;
 /**
  * Created by peet on 28.11.14.
  */
-public abstract  class AbstractFormatter implements Formatter{
+public abstract class AbstractFormatter implements Formatter {
 
-    @Override
-    public String getNodeFilePath() {
-        return getDirectory() + "nodes" + getFileExtension();
-    }
+  private final String directory;
 
-    @Override
-    public String getEdgeFilePath() {
-        return getDirectory() + "edges" + getFileExtension();
-    }
+  private final String pathSeparator;
 
-    @Override
-    public String getDataFilePath() {
-        return getDirectory() + "data" + getFileExtension();
-    }
+  protected AbstractFormatter(String directory) {
+    this.directory = directory;
+    this.pathSeparator = System.getProperty("file.separator");
+  }
 
-    @Override
-    public String getNodeFilePath(int thread) {
-        return getNodeFilePath()+String.valueOf(thread);
-    }
+  @Override
+  public String getNodeFilePath() {
+    return getDirectory() + pathSeparator + "nodes" + getFileExtension();
+  }
 
-    @Override
-    public String getEdgeFilePath(int thread) {
-        return getEdgeFilePath()+String.valueOf(thread);
-    }
+  @Override
+  public String getEdgeFilePath() {
+    return getDirectory() + pathSeparator + "edges" + getFileExtension();
+  }
 
-    protected String getDirectory(){
-        return System.getProperty("user.home")+"/";
-    }
+  @Override
+  public String getDataFilePath() {
+    return getDirectory() + pathSeparator + "data" + getFileExtension();
+  }
+
+  @Override
+  public String getNodeFilePath(int thread) {
+    return getNodeFilePath() + String.valueOf(thread);
+  }
+
+  @Override
+  public String getEdgeFilePath(int thread) {
+    return getEdgeFilePath() + String.valueOf(thread);
+  }
+
+  protected String getDirectory() {
+    return directory;
+
+  }
 }
