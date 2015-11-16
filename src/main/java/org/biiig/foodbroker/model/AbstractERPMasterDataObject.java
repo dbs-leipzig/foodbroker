@@ -9,8 +9,8 @@ public abstract class AbstractERPMasterDataObject extends AbstractERPDataObject 
 
     public AbstractERPMasterDataObject(Map<String, Object> baseValues) {
         super();
+        this.properties.put("kind","MasterData");
         this.metaData.put("quality",(String) baseValues.get("_quality"));
-        this.metaData.put("kind","MasterData");
     }
 
     public String getQuality() {

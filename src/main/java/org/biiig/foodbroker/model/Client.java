@@ -10,8 +10,8 @@ public class Client extends AbstractCITDataObject {
         this.properties.put("contactPhone", "0123456789");
         this.properties.put("erpCustNum",customer.getProperty("num"));
         this.properties.put("account","CL" + String.valueOf(this.getID()));
+        this.properties.put("kind","MasterData");
         this.metaData.put("quality",customer.getQuality());
-        this.metaData.put("kind","MasterData");
     }
 
     @Override

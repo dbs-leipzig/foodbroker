@@ -9,7 +9,7 @@ import java.util.Date;
 public abstract class AbstractERPTransactionalDataObject extends AbstractERPDataObject implements TransactionalDataObject {
     public void setDate(Date date) {
         this.properties.put("date",date);
-        this.metaData.put("kind","TransData");
+        this.properties.put("kind","TransData");
     }
 
     public Date getDate() {

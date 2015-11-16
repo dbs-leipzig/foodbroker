@@ -10,7 +10,7 @@ public class Ticket extends AbstractCITDataObject {
     public Ticket(SalesOrder salesOrder) {
         this.properties.put("erpSoNum", salesOrder.getProperty("num"));
         this.properties.put("id",id);
-        this.metaData.put("kind","TransData");
+        this.properties.put("kind","TransData");
     }
 
     @Override

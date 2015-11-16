@@ -8,8 +8,8 @@ public class User extends AbstractCITDataObject implements MasterDataObject{
     public User(Employee employee) {
         this.properties.put("name",employee.getProperty("name"));
         this.properties.put("erpEmplNum", employee.getProperty("num"));
+        this.properties.put("kind","MasterData");
         this.metaData.put("quality",employee.getQuality());
-        this.metaData.put("kind","MasterData");
         setEmail();
     }
 
