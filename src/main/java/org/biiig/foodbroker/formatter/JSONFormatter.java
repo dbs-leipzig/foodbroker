@@ -58,12 +58,14 @@ public class JSONFormatter extends AbstractFormatter {
         JSONObject json = new JSONObject();
 
         for(String key : propertyContainer.getPropertyKeys()){
-            Object value = propertyContainer.getProperty(key);
+            if (key.equals("kind")) {
+                Object value = propertyContainer.getProperty(key);
 
-            if (value instanceof Date) {
-                value = dateFormatter.format((Date) value);
+                if (value instanceof Date) {
+                    value = dateFormatter.format((Date) value);
+                }
+                json.put(key, value);
             }
-            json.put(key, value);
         }
         return json;
     }
@@ -72,8 +74,10 @@ public class JSONFormatter extends AbstractFormatter {
         JSONObject json = new JSONObject();
 
         for(String key : propertyContainer.getMetaDataKeys()){
-            String value = propertyContainer.getMetaData(key);
-            json.put(key,value);
+            if (key.equals("label")) {
+                String value = propertyContainer.getMetaData(key);
+                json.put(key, value);
+            }
         }
         return json;
     }

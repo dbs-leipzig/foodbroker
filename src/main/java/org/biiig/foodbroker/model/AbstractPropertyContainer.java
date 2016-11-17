@@ -8,16 +8,16 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class AbstractPropertyContainer implements PropertyContainer {
     protected final static AtomicLong instanceCount = new AtomicLong(0);
-    protected final long id;
+    protected final UUID id;
     protected final Map<String,Object> properties = new HashMap<>();
     protected final Map<String,String> metaData = new HashMap<>();
 
     public AbstractPropertyContainer() {
-        this.id = instanceCount.addAndGet(1);
+        this.id = UUID.randomUUID();
     }
 
     @Override
-    public long getID() {
+    public UUID getID() {
         return this.id;
     }
 

@@ -1,5 +1,6 @@
 package org.biiig.foodbroker.model;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by peet on 20.11.14.
@@ -10,7 +11,7 @@ public interface PropertyContainer {
      *
      * @return
      */
-    long getID();
+    UUID getID();
 
     public Set<String> getPropertyKeys();
     public Set<String> getMetaDataKeys();
